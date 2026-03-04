@@ -12,7 +12,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { useUser } from "@clerk/clerk-expo";
 import { router, usePathname } from "expo-router";
@@ -159,19 +159,17 @@ export default function DrawerLayout() {
         drawerActiveTintColor: theme.primary,
         drawerInactiveTintColor: theme.subtext,
         drawerType: "front",
-    swipeEdgeWidth: 200,
+        swipeEdgeWidth: 200,
       }}
       initialRouteName="(tabs)" // ✅ default route ONLY
     >
- 
       <Drawer.Screen
         name="(tabs)"
         options={{
-          drawerLabel:
-            currentLevel?.value
-              ? currentLevel.value.charAt(0).toUpperCase() +
-                currentLevel.value.slice(1)
-              : "Home",
+          drawerLabel: currentLevel?.value
+            ? currentLevel.value.charAt(0).toUpperCase() +
+              currentLevel.value.slice(1)
+            : "Home",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="planet-outline" size={size} color={color} />
           ),
@@ -188,6 +186,25 @@ export default function DrawerLayout() {
               size={size}
               color={color}
             />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="live"
+        options={{
+          drawerLabel: "Live",
+          drawerIcon: ({ color, size }) => (
+            <Feather name="video" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="audio"
+        options={{
+          drawerLabel: "Audio Rooms",
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="mic-circle" size={size} color={color} />
           ),
         }}
       />

@@ -10,7 +10,7 @@ import { StatusBar, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Channel } from "stream-chat";
 import { ChannelList } from "stream-chat-expo";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
 
 const ChatsScreen = () => {
   const router = useRouter();
@@ -37,7 +37,7 @@ const ChatsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={["top"]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -52,11 +52,11 @@ const ChatsScreen = () => {
       </View> */}
 
       {/* SEARCH BAR */}
-      <View className="flex-row items-center bg-surface mx-5 mb-3 px-3.5  rounded-[14px] gap-2.5 border border-border w-[80%] ml-auto">
+      <View className="flex-row items-center bg-surface mx-5 mb-3 px-3.5 py-3 rounded-[14px] gap-2.5 border border-border w-[80%] ml-auto">
         <Ionicons name="search" size={18} color={COLORS.textMuted} />
         <TextInput
           className="flex-1 text-[15px] text-foreground"
-          placeholder="Search member..."
+          placeholder="Search study rooms..."
           placeholderTextColor={COLORS.textMuted}
           value={search}
           onChangeText={setSearch}

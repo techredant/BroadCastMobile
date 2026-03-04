@@ -14,7 +14,7 @@ export const DrawerMenuButton = () => {
       onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
       style={{
         position: "absolute",
-        top: 50,
+        top: 40,
         left: 16,
         zIndex: 100,
         backgroundColor: "#1F2937",

@@ -16,9 +16,8 @@ import { Call, StreamVideoClient } from "@stream-io/video-react-native-sdk";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { router } from "expo-router";
-import { useTheme } from "../../../../context/ThemeContext";
-import { useLevel } from "../../../../context/LevelContext";
-import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
+import { useTheme } from "../../../../../context/ThemeContext";
+import { useLevel } from "../../../../../context/LevelContext";
 
 const { width } = Dimensions.get("window");
 
@@ -82,7 +81,6 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       {/* HEADER */}
-      <DrawerMenuButton />
       <Animated.View entering={FadeInUp}>
         <View style={styles.header}>
           <View>

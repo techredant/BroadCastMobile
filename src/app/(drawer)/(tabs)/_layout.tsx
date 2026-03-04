@@ -61,6 +61,8 @@ import { useUser } from "@clerk/clerk-expo";
 import { useTheme } from "../../../../context/ThemeContext";
 import { useLevel } from "../../../../context/LevelContext";
 import { LevelSocketProvider } from "@/contexts/LevelSocketContext";
+import { PostButton } from "@/modals/PostButton";
+import { Image } from "react-native";
 
 export default function TabsLayout() {
   const { theme } = useTheme();
@@ -125,16 +127,28 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="profile/index"
           options={{
-            tabBarLabel: "Profile",
+            tabBarLabel: "you",
             tabBarIcon: ({ color, size }) =>
               profileImage ? (
-                <Ionicons name="person-circle" size={size} color={color} />
+               <Image
+                         source={{
+                           uri: userDetails?.image || user?.imageUrl,
+                         }}
+                         style={{
+                           width: 30,
+                           height: 30,
+                           borderRadius: 32,
+                           backgroundColor: theme.border,
+                         }}
+                       />
               ) : (
                 <Ionicons name="person-outline" size={size} color={color} />
               ),
           }}
         />
       </Tabs>
+
+      <PostButton />
     </LevelSocketProvider>
   );
 }

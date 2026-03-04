@@ -15,9 +15,9 @@ export default function AuthRoutesLayout() {
   }
 
   // If signed in, RootLayout will redirect, so just render nothing for now
-  // if (isSignedIn) {
-  //   return null;
-  // }
+  if (isSignedIn) {
+    return null;
+  }
 
   // Render auth stack: sign-in, sign-up, etc.
   return (

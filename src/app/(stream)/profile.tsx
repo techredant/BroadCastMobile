@@ -10,7 +10,8 @@ import {
   ScrollView,
   StatusBar,
 } from "react-native";
-import { useTheme } from "../../../../context/ThemeContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../../context/ThemeContext";
 
 const MENU_ITEMS = [
   {

@@ -1,101 +1,15 @@
-// import { studyBuddyTheme } from "@/lib/theme";
-// import { useUser } from "@clerk/clerk-expo";
-// import type { UserResource } from "@clerk/types";
-// import { useEffect, useRef } from "react";
-// import { Chat, OverlayProvider, useCreateChatClient } from "stream-chat-expo";
-// import { FullScreenLoader } from "./FullScreenLoader";
-
-// const STREAM_API_KEY = process.env.EXPO_PUBLIC_STREAM_API_KEY!;
-
-// const syncUserToStream = async (user: UserResource) => {
-//   try {
-//     await fetch("/api/sync-user", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         userId: user.id,
-//         name: user.fullName ?? user.username ?? user.emailAddresses[0].emailAddress.split("@")[0],
-//         image: user.imageUrl,
-//       }),
-//     });
-//   } catch (error) {
-//     console.error("Failed to syn user to Stream", error);
-//   }
-// };
-
-// const ChatClient = ({ children, user }: { children: React.ReactNode; user: UserResource }) => {
-//   const syncedRef = useRef(false);
-
-//   useEffect(() => {
-//     // this if statements is needed so that we don't run this method multiple times. only once!
-//     if (!syncedRef.current) {
-//       syncedRef.current = true;
-//       syncUserToStream(user);
-//     }
-//   }, [user]);
-
-//   const tokenProvider = async () => {
-//     try {
-//       const response = await fetch("/api/token", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ userId: user.id }),
-//       });
-//       const data = await response.json();
-//       return data.token;
-//     } catch (error) {
-//        console.log("chatwrapper error", error);
-
-//     }
-//   };
-
-//   const chatClient = useCreateChatClient({
-//     apiKey: STREAM_API_KEY,
-//     userData: {
-//       id: user.id,
-//       name: user.fullName ?? user.username ?? user.emailAddresses[0].emailAddress.split("@")[0],
-//       image: user.imageUrl,
-//     },
-//     tokenOrProvider: tokenProvider,
-//   });
-
-//   if (!chatClient) return <FullScreenLoader message="Loading..." />;
-
-//   return (
-//     <OverlayProvider value={{ style: studyBuddyTheme }}>
-//       <Chat client={chatClient} style={studyBuddyTheme}>
-//         {children}
-//       </Chat>
-//     </OverlayProvider>
-//   );
-// };
-
-// const ChatWrapper = ({ children }: { children: React.ReactNode }) => {
-//   const { user, isLoaded } = useUser();
-
-//   if (!isLoaded) return <FullScreenLoader message="Loading..." />;
-
-//   // not signed in — render children directly (auth screens)
-//   if (!user) return <>{children}</>;
-
-//   return <ChatClient user={user}>{children}</ChatClient>;
-// };
-// export default ChatWrapper;
-
-// // TODO: ADD sentry logs link in the video
-
-import { useEffect, useRef } from "react";
-import { useUser } from "@clerk/clerk-expo";
+// ChatWrapper.tsx
+import { useEffect, useRef, useState } from "react";
 import { Chat, OverlayProvider, useCreateChatClient } from "stream-chat-expo";
 import { FullScreenLoader } from "./FullScreenLoader";
 import { studyBuddyTheme } from "@/lib/theme";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+const API_URL = "https://backend-api.redanttech.com";
 const STREAM_API_KEY = process.env.EXPO_PUBLIC_STREAM_API_KEY!;
 
 async function syncUserToStream(user: any) {
   try {
-    await fetch(`${API_URL}/stream/sync-user`, {
+    await fetch(`${API_URL}/api/stream/sync-user`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -104,48 +18,42 @@ async function syncUserToStream(user: any) {
         image: user.imageUrl,
       }),
     });
-  } catch (error) {
-    console.error("Failed to sync user:", error);
+  } catch (err) {
+    console.error("Failed to sync user:", err);
   }
 }
 
 async function getStreamToken(userId: string) {
-  const response = await fetch(`${API_URL}/stream/token`, {
+  const res = await fetch(`${API_URL}/api/stream/token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId }),
   });
 
-  const data = await response.json();
+  if (!res.ok) throw new Error(`Token fetch failed: ${res.status}`);
+  const data = await res.json();
+  if (!data.token) throw new Error("No token returned from backend");
   return data.token;
 }
 
-const ChatWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoaded } = useUser();
+type ChatWrapperProps = {
+  user: any;
+  children: React.ReactNode;
+};
+
+export const ChatWrapper = ({ user, children }: ChatWrapperProps) => {
+  const [clientReady, setClientReady] = useState(false);
   const syncedRef = useRef(false);
 
-  // Wait for Clerk to load
-  if (!isLoaded) {
-    return <FullScreenLoader message="Loading user..." />;
-  }
-
-  // Not signed in → just render normally
-  if (!user) {
-    return <>{children}</>;
-  }
-
-  // Sync once
+  // Sync user once
   useEffect(() => {
     if (!syncedRef.current) {
       syncedRef.current = true;
-      syncUserToStream(user);
+      syncUserToStream(user).catch(console.error);
     }
   }, [user]);
 
-  const tokenProvider = async () => {
-    return await getStreamToken(user.id);
-  };
-
+  // Create chat client
   const chatClient = useCreateChatClient({
     apiKey: STREAM_API_KEY,
     userData: {
@@ -153,10 +61,15 @@ const ChatWrapper = ({ children }: { children: React.ReactNode }) => {
       name: user.fullName ?? user.username ?? "Guest",
       image: user.imageUrl,
     },
-    tokenOrProvider: tokenProvider,
+    tokenOrProvider: async () => await getStreamToken(user.id),
   });
 
-  if (!chatClient) {
+  // ✅ Ready state
+  useEffect(() => {
+    if (chatClient) setClientReady(true);
+  }, [chatClient]);
+
+  if (!chatClient || !clientReady) {
     return <FullScreenLoader message="Loading chat..." />;
   }
 

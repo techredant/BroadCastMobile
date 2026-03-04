@@ -1,4 +1,3 @@
-import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 import ExploreUserCard from "@/components/ExploreUserCard";
 import ListEmptyComponent from "@/components/ListEmptyComponent";
 import { useAppContext } from "@/contexts/AppProvider";
@@ -56,13 +55,15 @@ const ExploreScreen = () => {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <DrawerMenuButton />
-      <View className="px-5 pt-5 justify-center  pb-1">
-        <Text className="text-[28px] font-bold text-foreground text-center">Explore</Text>
+      <View className="px-5 pt-3 pb-1">
+        <Text className="text-[28px] font-bold text-foreground">Explore</Text>
+        <Text className="text-sm text-foreground-muted mt-1">
+          Find people and start chatting
+        </Text>
       </View>
 
       {/* Search bar */}
-      <View className="flex-row items-center bg-surface mx-5 my-4 px-3.5  rounded-[14px] gap-2.5 border border-border">
+      <View className="flex-row items-center bg-surface mx-5 my-4 px-3.5 py-3 rounded-[14px] gap-2.5 border border-border">
         <Ionicons name="search" size={18} color={COLORS.textMuted} />
 
         <TextInput

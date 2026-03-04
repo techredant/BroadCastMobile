@@ -40,7 +40,7 @@ export default function MarketScreen() {
     const fetchProducts = async () => {
       try {
         const res = await axios.get<Product[]>(
-          "https://cast-api-zeta.vercel.app/api/products",
+          "https://backend-api.redanttech.com/api/products",
         );
         setProducts(res.data);
       } catch (err) {
@@ -141,7 +141,7 @@ export default function MarketScreen() {
 
         {/* Sell Button */}
         <Pressable
-          onPress={() => router.push("/market/sell-form")}
+          onPress={() => router.push("/")}
           style={{
             marginLeft: 10,
             backgroundColor: theme.button,
