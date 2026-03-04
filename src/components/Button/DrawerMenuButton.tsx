@@ -5,7 +5,6 @@ import { useTheme } from "../../../context/ThemeContext";
 import { useNavigation } from "expo-router";
 import { DrawerActions } from "@react-navigation/native";
 
-
 export const DrawerMenuButton = () => {
   const navigation = useNavigation();
   const { theme } = useTheme();

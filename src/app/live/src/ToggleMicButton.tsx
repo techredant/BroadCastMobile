@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { callManager, useCall, useCallStateHooks, OwnCapability } from "@stream-io/video-react-native-sdk";
+import {
+  callManager,
+  useCall,
+  useCallStateHooks,
+  OwnCapability,
+} from "@stream-io/video-react-native-sdk";
 
 export const ToggleMicButton = () => {
   const call = useCall();
@@ -56,11 +61,7 @@ export const ToggleMicButton = () => {
       {loading ? (
         <ActivityIndicator color="white" />
       ) : (
-        <Ionicons
-          name={isMuted ? "mic-off" : "mic"}
-          size={28}
-          color="white"
-        />
+        <Ionicons name={isMuted ? "mic-off" : "mic"} size={28} color="white" />
       )}
     </Pressable>
   );

@@ -6,16 +6,18 @@ import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { StatusBar, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Channel } from "stream-chat";
 import { ChannelList } from "stream-chat-expo";
+import { useTheme } from "../../../../context/ThemeContext";
 
 const ChatsScreen = () => {
   const router = useRouter();
   const { setChannel } = useAppContext();
   const { user } = useUser();
   const [search, setSearch] = useState("");
+  const { theme, isDark } = useTheme();
 
   const filters = { members: { $in: [user?.id!] }, type: "messaging" };
 
@@ -27,14 +29,20 @@ const ChatsScreen = () => {
     const q = search.toLowerCase();
 
     return channels.filter((channel) => {
-      const name = (channel.data?.name as string | undefined)?.toLowerCase() ?? "";
+      const name =
+        (channel.data?.name as string | undefined)?.toLowerCase() ?? "";
       const cid = channel.cid.toLowerCase();
       return name.includes(q) || cid.includes(q);
     });
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle={"light-content"}
+      />
       <DrawerMenuButton />
       {/* HEADER */}
       <View className="px-5 pt-3 pb-2 justify-center ml-auto">

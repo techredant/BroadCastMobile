@@ -20,7 +20,7 @@ import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import { useUserOnboarding } from "../../../context/UserOnBoardingContext";
-
+import { useLevel } from "../../../context/LevelContext";
 
 const accountOptions = [
   "Personal Account",
@@ -38,6 +38,7 @@ const NamesScreen = () => {
   const { user } = useUser();
   const { getToken } = useAuth();
   const { theme, isDark } = useTheme();
+  const { currentLevel, setCurrentLevel } = useLevel();
 
   const {
     firstName = "",
@@ -58,7 +59,7 @@ const NamesScreen = () => {
     lastName: "",
     nickName: "",
     accountType: "",
-    companyName: ""
+    companyName: "",
   });
   const [accountType, setAccountType] = useState(accountOptions[0]);
   const [isEditing, setIsEditing] = useState(false);
@@ -78,16 +79,37 @@ const NamesScreen = () => {
 
   // Validate form fields
   const validateFields = () => {
-    const newErrors = { firstName: "", lastName: "", nickName: "", accountType: "", companyName: "" };
+    const newErrors = {
+      firstName: "",
+      lastName: "",
+      nickName: "",
+      accountType: "",
+      companyName: "",
+    };
     let valid = true;
 
     if (accountType === "Personal Account") {
-      if (!firstName.trim()) { newErrors.firstName = "First name is required"; valid = false; }
-      if (!lastName.trim()) { newErrors.lastName = "Last name is required"; valid = false; }
-      if (!nickName.trim()) { newErrors.nickName = "Nickname is required"; valid = false; }
+      if (!firstName.trim()) {
+        newErrors.firstName = "First name is required";
+        valid = false;
+      }
+      if (!lastName.trim()) {
+        newErrors.lastName = "Last name is required";
+        valid = false;
+      }
+      if (!nickName.trim()) {
+        newErrors.nickName = "Nickname is required";
+        valid = false;
+      }
     } else {
-      if (!companyName.trim()) { newErrors.companyName = "Company name is required"; valid = false; }
-      if (!nickName.trim()) { newErrors.nickName = "Organization name is required"; valid = false; }
+      if (!companyName.trim()) {
+        newErrors.companyName = "Company name is required";
+        valid = false;
+      }
+      if (!nickName.trim()) {
+        newErrors.nickName = "Organization name is required";
+        valid = false;
+      }
     }
 
     setErrors(newErrors);
@@ -99,7 +121,9 @@ const NamesScreen = () => {
     const fetchUser = async () => {
       try {
         if (!user?.id) return;
-        const res = await axios.get(`https://cast-api-zeta.vercel.app/api/users/${user.id}`);
+        const res = await axios.get(
+          `https://backend-api.redanttech.com/api/users/${user.id}`,
+        );
         if (res.data) {
           setFirstName(res.data.firstName || "");
           setLastName(res.data.lastName || "");
@@ -107,7 +131,7 @@ const NamesScreen = () => {
           setImage(res.data.image || user?.imageUrl);
           setAccountType(res.data.accountType || accountOptions[0]);
           setIsEditing(true);
-          setCompanyName(res.data.companyName || "")
+          setCompanyName(res.data.companyName || "");
         }
       } catch {
         setIsEditing(false);
@@ -117,53 +141,123 @@ const NamesScreen = () => {
   }, [user]);
 
   // Submit handler
- const handleSubmit = async () => {
-  if (!validateFields()) return;
-  setLoading(true);
+  //  const handleSubmit = async () => {
+  //   if (!validateFields()) return;
+  //   setLoading(true);
 
-  try {
-    const payload = {
-      clerkId: user?.id,
-      email: user?.primaryEmailAddress?.emailAddress || "",
-      firstName: accountType === "Personal Account" ? firstName : "",
-      lastName: accountType === "Personal Account" ? lastName : "",
-      companyName: accountType !== "Personal Account" ? companyName : "",
-      nickName,
-      image,
-      accountType,
-    };
+  //   try {
+  //     const payload = {
+  //       clerkId: user?.id,
+  //       email: user?.primaryEmailAddress?.emailAddress || "",
+  //       firstName: accountType === "Personal Account" ? firstName : "",
+  //       lastName: accountType === "Personal Account" ? lastName : "",
+  //       companyName: accountType !== "Personal Account" ? companyName : "",
+  //       nickName,
+  //       image,
+  //       accountType,
+  //     };
 
-    const res = await axios.post(
-      "https://cast-api-zeta.vercel.app/api/users/create-user",
-      payload
-    );
+  //     const res = await axios.post(
+  //       "https://backend-api.redanttech.com/api/users/create-user",
+  //       payload,
+  //         { timeout: 10000 } // 10 seconds
+  //     );
 
-    if (res.data.success) {
-      // Update Clerk metadata
-    await user?.update({
-  unsafeMetadata: {
-    ...user?.unsafeMetadata,
-    accountType,
-    hasCompletedName: true,
-  },
-});
+  //     console.log("API response:", res.data);
 
-      // Reload user
-      await user?.reload();
+  //     if (res.data.success) {
+  //   await user?.update({
+  //     unsafeMetadata: {
+  //       ...user?.unsafeMetadata,
+  //       accountType,
+  //       hasCompletedName: true,
+  //     },
+  //   });
 
-      // ✅ Navigate safely AFTER reload
+  //   router.replace("/(onboarding)/location");
+  // }
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     setErrors((prev) => ({
+  //       ...prev,
+  //       accountType: "Failed to save profile",
+  //     }));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    // 1️⃣ Validate fields first
+    if (!validateFields()) return;
+
+    setLoading(true);
+
+    try {
+      // 2️⃣ Build payload for your backend
+      const payload = {
+        clerkId: user?.id,
+        email: user?.primaryEmailAddress?.emailAddress || "",
+        firstName: accountType === "Personal Account" ? firstName : "",
+        lastName: accountType === "Personal Account" ? lastName : "",
+        companyName: accountType !== "Personal Account" ? companyName : "",
+        nickName,
+        image,
+        accountType,
+      };
+
+      // 3️⃣ Save to backend
+      const res = await axios.post(
+        "https://backend-api.redanttech.com/api/users/create-user",
+        payload,
+        { timeout: 10000 }, // prevent hanging
+      );
+
+      if (!res.data?.success) {
+        setErrors((prev) => ({
+          ...prev,
+          accountType: "Failed to save profile",
+        }));
+        return;
+      }
+
+      // 4️⃣ Update Clerk user metadata safely
+      if (user) {
+        try {
+          await user.update({
+            unsafeMetadata: {
+              ...user.unsafeMetadata,
+              accountType,
+              hasCompletedName: true,
+            },
+          });
+        } catch (err) {
+          console.error("Clerk update failed:", err);
+        }
+      }
+
+      // 5️⃣ Update your LevelContext (or any global context) so drawer re-renders immediately
+      setCurrentLevel((prev: any) => ({
+        ...prev,
+        userDetails: {
+          firstName: accountType === "Personal Account" ? firstName : "",
+          lastName: accountType === "Personal Account" ? lastName : "",
+          nickName,
+          image,
+          accountType,
+          companyName: accountType !== "Personal Account" ? companyName : "",
+        },
+      }));
+
+      // 6️⃣ Navigate to next onboarding step
       router.replace("/(onboarding)/location");
+    } catch (err: any) {
+      console.error("Error saving profile:", err);
+      setErrors((prev) => ({ ...prev, accountType: "Failed to save profile" }));
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    console.error(err);
-    setErrors((prev) => ({
-      ...prev,
-      accountType: "Failed to save profile",
-    }));
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
@@ -172,21 +266,51 @@ const NamesScreen = () => {
         backgroundColor="transparent"
         barStyle={isDark ? "light-content" : "dark-content"}
       />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 10 }} keyboardShouldPersistTaps="handled">
-          <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center", color: theme.text }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{ padding: 16, gap: 10 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: "bold",
+              textAlign: "center",
+              color: theme.text,
+            }}
+          >
             Complete Your Profile 🚀
           </Text>
 
-          <TouchableOpacity onPress={pickImage} style={{ alignItems: "center", marginVertical: 10 }}>
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{ alignItems: "center", marginVertical: 10 }}
+          >
             <Image
-              source={{ uri: image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKfj6RsyRZqO4nnWkPFrYMmgrzDmyG31pFQ&s" }}
+              source={{
+                uri:
+                  image ||
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKfj6RsyRZqO4nnWkPFrYMmgrzDmyG31pFQ&s",
+              }}
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
           </TouchableOpacity>
 
-          <Text style={{ color: theme.text, fontWeight: "bold" }}>Account Type</Text>
-          <View style={{ borderWidth: 1, borderColor: theme.border, borderRadius: 8, backgroundColor: theme.background, marginBottom: 10 }}>
+          <Text style={{ color: theme.text, fontWeight: "bold" }}>
+            Account Type
+          </Text>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: theme.border,
+              borderRadius: 8,
+              backgroundColor: theme.background,
+              marginBottom: 10,
+            }}
+          >
             <Picker
               selectedValue={accountType}
               onValueChange={setAccountType}
@@ -198,7 +322,9 @@ const NamesScreen = () => {
               ))}
             </Picker>
           </View>
-          {errors.accountType ? <Text style={{ color: "red" }}>{errors.accountType}</Text> : null}
+          {errors.accountType ? (
+            <Text style={{ color: "red" }}>{errors.accountType}</Text>
+          ) : null}
 
           {accountType === "Personal Account" ? (
             <>
@@ -206,28 +332,55 @@ const NamesScreen = () => {
                 placeholder="First Name"
                 value={firstName}
                 onChangeText={setFirstName}
-                style={{ borderWidth: 1, borderColor: theme.border, padding: 12, borderRadius: 8, marginBottom: 5, color: theme.text }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 5,
+                  color: theme.text,
+                }}
                 placeholderTextColor={theme.subtext}
               />
-              {errors.firstName && <Text style={{ color: "red" }}>{errors.firstName}</Text>}
+              {errors.firstName && (
+                <Text style={{ color: "red" }}>{errors.firstName}</Text>
+              )}
 
               <TextInput
                 placeholder="Last Name"
                 value={lastName}
                 onChangeText={setLastName}
-                style={{ borderWidth: 1, borderColor: theme.border, padding: 12, borderRadius: 8, marginBottom: 5, color: theme.text }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 5,
+                  color: theme.text,
+                }}
                 placeholderTextColor={theme.subtext}
               />
-              {errors.lastName && <Text style={{ color: "red" }}>{errors.lastName}</Text>}
+              {errors.lastName && (
+                <Text style={{ color: "red" }}>{errors.lastName}</Text>
+              )}
 
               <TextInput
                 placeholder="Nickname"
                 value={nickName}
                 onChangeText={setNickName}
-                style={{ borderWidth: 1, borderColor: theme.border, padding: 12, borderRadius: 8, marginBottom: 5, color: theme.text }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 5,
+                  color: theme.text,
+                }}
                 placeholderTextColor={theme.subtext}
               />
-              {errors.nickName && <Text style={{ color: "red" }}>{errors.nickName}</Text>}
+              {errors.nickName && (
+                <Text style={{ color: "red" }}>{errors.nickName}</Text>
+              )}
             </>
           ) : (
             <>
@@ -235,28 +388,55 @@ const NamesScreen = () => {
                 placeholder="Organization Namae"
                 value={companyName}
                 onChangeText={setCompanyName}
-                style={{ borderWidth: 1, borderColor: theme.border, padding: 12, borderRadius: 8, marginBottom: 5, color: theme.text }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 5,
+                  color: theme.text,
+                }}
                 placeholderTextColor={theme.subtext}
               />
-              {errors.companyName && <Text style={{ color: "red" }}>{errors.companyName}</Text>}
+              {errors.companyName && (
+                <Text style={{ color: "red" }}>{errors.companyName}</Text>
+              )}
 
               <TextInput
                 placeholder="Organization Nickname"
                 value={nickName}
                 onChangeText={setNickName}
-                style={{ borderWidth: 1, borderColor: theme.border, padding: 12, borderRadius: 8, marginBottom: 5, color: theme.text }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 5,
+                  color: theme.text,
+                }}
                 placeholderTextColor={theme.subtext}
               />
-              {errors.nickName && <Text style={{ color: "red" }}>{errors.nickName}</Text>}
+              {errors.nickName && (
+                <Text style={{ color: "red" }}>{errors.nickName}</Text>
+              )}
             </>
           )}
 
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}
-            style={{ backgroundColor: theme.primary, padding: 16, borderRadius: 12, alignItems: "center", marginTop: 20 }}
+            style={{
+              backgroundColor: theme.primary,
+              padding: 16,
+              borderRadius: 12,
+              alignItems: "center",
+              marginTop: 20,
+            }}
           >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}> {loading ? "loading..." : "Save & Continue"}</Text>
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>
+              {" "}
+              {loading ? "Saving..." : "Save & Continue"}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

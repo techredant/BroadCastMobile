@@ -5,16 +5,20 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
-  StatusBar,Modal
+  StatusBar,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { StreamVideoClient, Call, useStreamVideoClient } from "@stream-io/video-react-native-sdk";
+import {
+  StreamVideoClient,
+  Call,
+  useStreamVideoClient,
+} from "@stream-io/video-react-native-sdk";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { router } from "expo-router";
 import { useTheme } from "../../../../context/ThemeContext";
 import { useLevel } from "../../../../context/LevelContext";
-
 
 export const HomeScreen = () => {
   const client = useStreamVideoClient();
@@ -23,7 +27,7 @@ export const HomeScreen = () => {
 
   const [calls, setCalls] = useState<Call[]>([]);
   const [loading, setLoading] = useState(true);
-     const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   /* ================= DISCOVER ================= */
   const categories = ["All", "National", "County", "Debates", "Trending"];
@@ -54,10 +58,9 @@ export const HomeScreen = () => {
     return () => clearInterval(interval);
   }, [client]);
 
-    const createTitle = () => {
-  setModalVisible(true);
-};
-
+  const createTitle = () => {
+    setModalVisible(true);
+  };
 
   /* ================= FILTER ROOMS ================= */
   const filteredRooms = calls.filter((room) => {
@@ -74,42 +77,40 @@ export const HomeScreen = () => {
   const liveRooms = calls.filter((c) => !c.state?.endedAt);
 
   /* ================= CREATE ROOM ================= */
- const createRoom = async () => {
-  if (!client || !userDetails) {
-    console.log("Client not ready");
-    return;
-  }
+  const createRoom = async () => {
+    if (!client || !userDetails) {
+      console.log("Client not ready");
+      return;
+    }
 
-  const id = `audio_${Date.now()}_${userDetails.clerkId}`;
+    const id = `audio_${Date.now()}_${userDetails.clerkId}`;
 
-  try {
-    const call = client.call("audio_room", id);
+    try {
+      const call = client.call("audio_room", id);
 
-    await call.join({
-      create: true,
-      data: {
-        custom: {
-          title: `${userDetails.nickName}'s Room`,
-          category:
-            selectedCategory === "All" ? "National" : selectedCategory,
+      await call.join({
+        create: true,
+        data: {
+          custom: {
+            title: `${userDetails.nickName}'s Room`,
+            category:
+              selectedCategory === "All" ? "National" : selectedCategory,
+          },
         },
-      },
-    });
+      });
 
-    router.push({
-  pathname: "/audio/src/CallScreen",
-  params: { callId: id },
-});
-  } catch (err) {
-    console.log("Create error:", err);
-  }
-};
+      router.push({
+        pathname: "/audio/src/CallScreen",
+        params: { callId: id },
+      });
+    } catch (err) {
+      console.log("Create error:", err);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <StatusBar
-        barStyle={isDark ? "light-content" : "dark-content"}
-      />
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 
       {/* ================= HEADER ================= */}
       <Animated.View entering={FadeInUp}>
@@ -122,29 +123,30 @@ export const HomeScreen = () => {
             <Text style={[styles.title, { color: theme.text }]}>
               Audio Rooms
             </Text>
-            <Text style={{ color: theme.subtext }}>
-              {currentLevel?.value}
-            </Text>
+            <Text style={{ color: theme.subtext }}>{currentLevel?.value}</Text>
           </View>
 
-          <View style={{ position: "relative",
-            padding: 6,}}>
+          <View style={{ position: "relative", padding: 6 }}>
             <Ionicons name="radio-outline" size={24} color={theme.primary} />
-          
+
             {calls.length > 0 && (
-              <View style={{position: "absolute",
-            top: 0,
-            right: 0,
-            backgroundColor: "#ff3b30",
-            minWidth: 16,
-            height: 16,
-            borderRadius: 8,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 3,}}>
-                <Text style={{ color: "#fff",
-            fontSize: 10,
-            fontWeight: "bold",}}>
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  backgroundColor: "#ff3b30",
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 3,
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 10, fontWeight: "bold" }}
+                >
                   {calls.length < 9 ? "9+" : calls.length}
                 </Text>
               </View>
@@ -154,46 +156,45 @@ export const HomeScreen = () => {
       </Animated.View>
 
       {/* ================= DISCOVER CHANNELS ================= */}
-  <FlatList
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  data={categories}
-  keyExtractor={(item) => item}
-  contentContainerStyle={{
-    paddingHorizontal: 16,
-    paddingVertical: 4,   // 🔥 reduce vertical space
-  }}
-  style={{ maxHeight: 40 }} // 🔥 force smaller height
-  renderItem={({ item }) => {
-    const active = item === selectedCategory;
-
-    return (
-      <Pressable
-        onPress={() => setSelectedCategory(item)}
-        style={{
-          paddingHorizontal: 12,
-          paddingVertical: 6,   // 🔥 smaller button height
-          borderRadius: 16,
-          marginRight: 8,
-          backgroundColor: active ? theme.primary : theme.card,
-          justifyContent: "center",
-          alignItems: "center",
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={categories}
+        keyExtractor={(item) => item}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingVertical: 4, // 🔥 reduce vertical space
         }}
-      >
-        <Text
-          style={{
-            color: active ? "#fff" : theme.text,
-            fontSize: 13,       // 🔥 slightly smaller text
-            fontWeight: "500",
-          }}
-        >
-          {item}
-        </Text>
-      </Pressable>
-    );
-  }}
-/>
+        style={{ maxHeight: 40 }} // 🔥 force smaller height
+        renderItem={({ item }) => {
+          const active = item === selectedCategory;
 
+          return (
+            <Pressable
+              onPress={() => setSelectedCategory(item)}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6, // 🔥 smaller button height
+                borderRadius: 16,
+                marginRight: 8,
+                backgroundColor: active ? theme.primary : theme.card,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: active ? "#fff" : theme.text,
+                  fontSize: 13, // 🔥 slightly smaller text
+                  fontWeight: "500",
+                }}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          );
+        }}
+      />
 
       {/* ================= FILTER TABS ================= */}
       <View style={styles.tabs}>
@@ -238,11 +239,11 @@ export const HomeScreen = () => {
         <Pressable
           style={[styles.featured, { backgroundColor: theme.primary }]}
           onPress={() =>
-  router.push({
-    pathname: "/audio/src/CallScreen",
-    params: { callId: liveRooms[0].id },
-  })
-}
+            router.push({
+              pathname: "/audio/src/CallScreen",
+              params: { callId: liveRooms[0].id },
+            })
+          }
         >
           <Text style={styles.featuredLabel}>FEATURED ROOM</Text>
 
@@ -273,14 +274,14 @@ export const HomeScreen = () => {
             <Pressable
               style={[styles.roomCard, { backgroundColor: theme.card }]}
               onPress={
-  isLive
-    ? () =>
-        router.push({
-          pathname: "/audio/src/CallScreen",
-          params: { callId: item.id },
-        })
-    : undefined
-}
+                isLive
+                  ? () =>
+                      router.push({
+                        pathname: "/audio/src/CallScreen",
+                        params: { callId: item.id },
+                      })
+                  : undefined
+              }
             >
               <View>
                 <Text
@@ -301,11 +302,7 @@ export const HomeScreen = () => {
                 </Text>
               </View>
 
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={theme.text}
-              />
+              <Ionicons name="chevron-forward" size={20} color={theme.text} />
             </Pressable>
           );
         }}
@@ -316,28 +313,28 @@ export const HomeScreen = () => {
         <Ionicons name="add" size={26} color="#fff" />
       </Pressable>
 
-        <Modal 
-              visible={modalVisible}
-              animationType="slide"
-              transparent
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <View style={styles.overlay}>
-                <View style={styles.modalBox}>
-                  <Text style={styles.title}>Enter Room</Text>
-      
-                  <Pressable style={styles.joinBtn} onPress={createRoom}>
-                    <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                      Create Now
-                    </Text>
-                  </Pressable>
-      
-                  <Pressable onPress={() => setModalVisible(false)}>
-                    <Text style={{ marginTop: 10, color: "gray" }}>Cancel</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.title}>Enter Room</Text>
+
+            <Pressable style={styles.joinBtn} onPress={createRoom}>
+              <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                Create Now
+              </Text>
+            </Pressable>
+
+            <Pressable onPress={() => setModalVisible(false)}>
+              <Text style={{ marginTop: 10, color: "gray" }}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -388,7 +385,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-   overlay: {
+  overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",

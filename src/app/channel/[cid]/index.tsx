@@ -8,7 +8,12 @@ import { Image } from "expo-image";
 import { useNavigation, useRouter } from "expo-router";
 import { useLayoutEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
+import {
+  Channel,
+  MessageInput,
+  MessageList,
+  useChatContext,
+} from "stream-chat-expo";
 
 const ChannelScreen = () => {
   const { channel, setThread } = useAppContext();
@@ -24,7 +29,9 @@ const ChannelScreen = () => {
 
   if (channel) {
     const members = Object.values(channel.state.members);
-    const otherMember = members.find((member) => member.user_id !== client.userID);
+    const otherMember = members.find(
+      (member) => member.user_id !== client.userID,
+    );
     displayName = otherMember?.user?.name!;
     avatarUrl = otherMember?.user?.image || "";
   }
@@ -42,7 +49,10 @@ const ChannelScreen = () => {
       },
       headerTintColor: COLORS.text,
       headerLeft: () => (
-        <TouchableOpacity onPress={() => router.back()} className="ml-2 flex-row items-center">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="ml-2 flex-row items-center"
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
       ),
@@ -51,7 +61,12 @@ const ChannelScreen = () => {
           {avatarUrl ? (
             <Image
               source={avatarUrl}
-              style={{ width: 32, height: 32, borderRadius: 16, marginRight: 10 }}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                marginRight: 10,
+              }}
             />
           ) : (
             <View

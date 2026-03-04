@@ -1,6 +1,5 @@
 // import { Status } from "./types";
 
-
 export type RootStackParamList = {
   PostScreen: { key: string };
   StatusInput: undefined;

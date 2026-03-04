@@ -9,7 +9,6 @@ export default function ModalLayout() {
         animation: "slide_from_bottom", // slide up
       }}
     >
-      <Stack.Screen name="comments" />
     </Stack>
   );
 }

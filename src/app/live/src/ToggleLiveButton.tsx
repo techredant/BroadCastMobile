@@ -55,6 +55,12 @@ const styles = StyleSheet.create({
   offline: { backgroundColor: "#1F2937" },
   pressed: { transform: [{ scale: 0.96 }], opacity: 0.85 },
   content: { flexDirection: "row", alignItems: "center" },
-  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "white", marginRight: 8 },
+  liveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "white",
+    marginRight: 8,
+  },
   text: { color: "white", fontWeight: "700", fontSize: 16, letterSpacing: 0.5 },
 });

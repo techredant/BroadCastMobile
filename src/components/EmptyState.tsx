@@ -14,8 +14,12 @@ export function EmptyState({ icon, title, subtitle }: EmptyStateProps) {
       <View className="mb-4">
         <Ionicons name={icon} size={64} color={COLORS.textSubtle} />
       </View>
-      <Text className="text-center text-base text-foreground-muted">{title}</Text>
-      <Text className="mt-1 text-center text-sm text-foreground-subtle">{subtitle}</Text>
+      <Text className="text-center text-base text-foreground-muted">
+        {title}
+      </Text>
+      <Text className="mt-1 text-center text-sm text-foreground-subtle">
+        {subtitle}
+      </Text>
     </View>
   );
 }

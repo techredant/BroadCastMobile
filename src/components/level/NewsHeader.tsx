@@ -1,4 +1,3 @@
-
 import { Text } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useTheme } from "../../../context/ThemeContext";
@@ -11,18 +10,16 @@ export function LevelHeader() {
   const rawLevelValue =
     typeof currentLevel === "object"
       ? currentLevel?.value
-      : currentLevel ?? "home";
+      : (currentLevel ?? "home");
 
   const levelType =
-    typeof currentLevel === "object"
-      ? currentLevel?.type
-      : null;
+    typeof currentLevel === "object" ? currentLevel?.type : null;
 
   // 🔥 Convert "home" → "national"
   const displayValue =
     rawLevelValue?.toLowerCase() === "home"
       ? "national"
-      : rawLevelValue ?? "national";
+      : (rawLevelValue ?? "national");
 
   const formattedLevel =
     displayValue.charAt(0).toUpperCase() + displayValue.slice(1);
@@ -33,12 +30,13 @@ export function LevelHeader() {
       className="px-4 py-2 justify-center items-center mt-8"
       style={{ backgroundColor: theme.card }}
     >
-      <Text className="font-bold text-2xl" style={{ color: theme.text , fontSize: 18, marginTop: 14}}>
+      <Text
+        className="font-bold text-2xl"
+        style={{ color: theme.text, fontSize: 18, marginTop: 14 }}
+      >
         {formattedLevel}
-        {levelType && levelType !== "home" ? ` ${levelType}` : ""} {" "}news
+        {levelType && levelType !== "home" ? ` ${levelType}` : ""} news
       </Text>
     </Animated.View>
   );
 }
-
-

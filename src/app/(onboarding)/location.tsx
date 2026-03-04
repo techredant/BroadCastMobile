@@ -15,7 +15,6 @@ import { router } from "expo-router";
 import iebc from "../../../assets/data/iebc.json";
 import { useTheme } from "../../../context/ThemeContext";
 
-
 export default function LocationSelection() {
   const { theme, isDark } = useTheme();
   const { user, isLoaded } = useUser();
@@ -33,60 +32,56 @@ export default function LocationSelection() {
 
   const wards = useMemo(() => {
     const constituency = constituencies.find(
-      (c) => c.name === selectedConstituency
+      (c) => c.name === selectedConstituency,
     );
     return constituency?.wards || [];
   }, [selectedConstituency, constituencies]);
 
   // Save location to backend
   const saveLocation = async () => {
-  if (loading) return;
-  if (!user?.id) {
-    console.log("User not ready");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const payload = {
-      clerkId: user.id,
-      county: selectedCounty || "N/A",
-      constituency: selectedConstituency || "N/A",
-      ward: selectedWard || "N/A",
-    };
-
-    console.log("Sending payload:", payload);
-
-    await axios.post(
-      "https://cast-api-zeta.vercel.app/api/users/update-location",
-      payload
-    );
-
-    console.log("Location saved");
-    await user?.update({
-  unsafeMetadata: {
-    ...user?.unsafeMetadata,
-    onboardingComplete: true,
-  },
-});
-
-    // Router navigation
-    try {
-     router.replace("/(drawer)/(tabs)");
-
-    } catch (navErr) {
-      console.log("Navigation failed:", navErr);
+    if (loading) return;
+    if (!user?.id) {
+      console.log("User not ready");
+      return;
     }
-  } catch (err: any) {
 
-    console.log("❌ Save failed:", err?.message || err);
-  } finally {
-    setLoading(false);
-  }
+    setLoading(true);
 
-};
+    try {
+      const payload = {
+        clerkId: user.id,
+        county: selectedCounty || "N/A",
+        constituency: selectedConstituency || "N/A",
+        ward: selectedWard || "N/A",
+      };
 
+      console.log("Sending payload:", payload);
+
+      await axios.post(
+        "https://backend-api.redanttech.com/api/users/update-location",
+        payload,
+      );
+
+      console.log("Location saved");
+      await user?.update({
+        unsafeMetadata: {
+          ...user?.unsafeMetadata,
+          onboardingComplete: true,
+        },
+      });
+
+      // Router navigation
+      try {
+        router.replace("/(drawer)/(tabs)");
+      } catch (navErr) {
+        console.log("Navigation failed:", navErr);
+      }
+    } catch (err: any) {
+      console.log("❌ Save failed:", err?.message || err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // if (!isLoaded) return null;
 
@@ -122,7 +117,9 @@ export default function LocationSelection() {
       </View>
 
       {/* County */}
-      <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>County</Text>
+      <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>
+        County
+      </Text>
       <Picker
         selectedValue={selectedCounty}
         onValueChange={(val) => {
@@ -142,7 +139,9 @@ export default function LocationSelection() {
       {/* Constituency + Ward */}
       {selectedCounty && (
         <>
-          <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>Constituency</Text>
+          <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>
+            Constituency
+          </Text>
           <Picker
             selectedValue={selectedConstituency}
             onValueChange={(val) => {
@@ -160,7 +159,11 @@ export default function LocationSelection() {
 
           {selectedConstituency && (
             <>
-              <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>Ward</Text>
+              <Text
+                style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}
+              >
+                Ward
+              </Text>
               <Picker
                 selectedValue={selectedWard}
                 onValueChange={setSelectedWard}
@@ -185,25 +188,25 @@ export default function LocationSelection() {
       </Text>
 
       {/* Continue */}
-      {selectedCounty &&
-        selectedConstituency &&
-        selectedWard && (
-          <Pressable
-            onPress={saveLocation}
-            style={{
-              backgroundColor: theme.primary,
-              paddingVertical: 16,
-              borderRadius: 12,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 40,
-            }}
-          >
-                    <Text style={{ color: "#fff", fontWeight: "bold" }}> {loading ? "loading..." : "Save & Continue"}</Text>
-        
-          </Pressable>
-        )}
+      {selectedCounty && selectedConstituency && selectedWard && (
+        <Pressable
+          onPress={saveLocation}
+          style={{
+            backgroundColor: theme.primary,
+            paddingVertical: 16,
+            borderRadius: 12,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 40,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            {" "}
+            {loading ? "loading..." : "Save & Continue"}
+          </Text>
+        </Pressable>
+      )}
     </SafeAreaView>
   );
 }

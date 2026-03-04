@@ -23,7 +23,7 @@ const VerifyButton = () => {
       if (!user) return;
       try {
         const res = await axios.get(
-          `https://bc-backend-five.vercel.app/api/users/${user.id}`
+          `https://backend-api.redanttech.com/api/users/${user.id}`,
         );
         setVerified(res.data.isVerified || false);
 
@@ -45,7 +45,7 @@ const VerifyButton = () => {
       interval = setInterval(async () => {
         try {
           const res = await axios.get(
-            `https://bc-backend-five.vercel.app/api/users/${user.id}`
+            `https://backend-api.redanttech.com/api/users/${user.id}`,
           );
           if (res.data.isVerified) {
             setVerified(true);
@@ -64,20 +64,20 @@ const VerifyButton = () => {
     if (!user) return;
     try {
       setLoading(true);
-      await axios.post("https://bc-backend-five.vercel.app/api/verify", {
+      await axios.post("https://backend-api.redanttech.com/api/verify", {
         email: user.primaryEmailAddress?.emailAddress,
       });
-    //   Alert.alert(
-    //     "Your Verification has seent!",
-    //     "Click okay to proceed!",
-    //     [{ text: "OK", style: "default" }]
-    //   );
+      //   Alert.alert(
+      //     "Your Verification has seent!",
+      //     "Click okay to proceed!",
+      //     [{ text: "OK", style: "default" }]
+      //   );
       setVerificationStarted(true);
     } catch (err) {
       console.error("Verification error:", err);
       Alert.alert(
         "❌ Error",
-        "Failed to send verification email check your internet connection. Try again later."
+        "Failed to send verification email check your internet connection. Try again later.",
       );
     } finally {
       setLoading(false);
@@ -90,8 +90,8 @@ const VerifyButton = () => {
         verified
           ? "bg-gray-100"
           : verificationStarted
-          ? "bg-yellow-100 border-yellow-400"
-          : "bg-white border-gray-100"
+            ? "bg-yellow-100 border-yellow-400"
+            : "bg-white border-gray-100"
       }`}
       activeOpacity={0.8}
       onPress={handleVerify}

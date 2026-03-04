@@ -3,11 +3,11 @@ import {
   useCall,
   useCallStateHooks,
   OwnCapability,
-} from '@stream-io/video-react-native-sdk';
-import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../../../context/ThemeContext';
+} from "@stream-io/video-react-native-sdk";
+import React, { useEffect, useState } from "react";
+import { Pressable, StyleSheet, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../../../../context/ThemeContext";
 
 export const ToggleMicButton = () => {
   const call = useCall();
@@ -18,16 +18,16 @@ export const ToggleMicButton = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const isJoined = call?.state.callingState === 'joined';
+  const isJoined = call?.state.callingState === "joined";
 
   // 🔥 START AUDIO ONLY WHEN JOINED (NO STOP!)
   useEffect(() => {
     if (!call) return;
 
-    if (call.state.callingState === 'joined') {
+    if (call.state.callingState === "joined") {
       callManager.start({
-        audioRole: 'communicator',
-        defaultAudioDeviceEndpointType: 'speaker',
+        audioRole: "communicator",
+        defaultAudioDeviceEndpointType: "speaker",
       });
     }
   }, [call?.state.callingState]);
@@ -36,7 +36,7 @@ export const ToggleMicButton = () => {
   useEffect(() => {
     if (!call) return;
 
-    const unsub = call.on('call.state_changed', () => {
+    const unsub = call.on("call.state_changed", () => {
       console.log("CALL STATE:", call.state.callingState);
     });
 
@@ -47,7 +47,7 @@ export const ToggleMicButton = () => {
     if (!call) return;
 
     // 🚨 CRITICAL FIX
-    if (call.state.callingState !== 'joined') {
+    if (call.state.callingState !== "joined") {
       console.warn("Call not ready");
       return;
     }
@@ -70,8 +70,8 @@ export const ToggleMicButton = () => {
     }
   };
 
-  const isMuted = micStatus !== 'enabled';
-  const {theme} = useTheme()
+  const isMuted = micStatus !== "enabled";
+  const { theme } = useTheme();
 
   return (
     <Pressable
@@ -79,17 +79,13 @@ export const ToggleMicButton = () => {
       disabled={!isJoined || loading}
       style={[
         styles.button,
-        isMuted ? styles.muted :  {backgroundColor: theme.primary},
+        isMuted ? styles.muted : { backgroundColor: theme.primary },
       ]}
     >
       {loading ? (
         <ActivityIndicator color="white" />
       ) : (
-        <Ionicons
-          name={isMuted ? 'mic-off' : 'mic'}
-          size={28}
-          color="white"
-        />
+        <Ionicons name={isMuted ? "mic-off" : "mic"} size={28} color="white" />
       )}
     </Pressable>
   );
@@ -100,9 +96,9 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  active: { backgroundColor: 'blue' },
-  muted: { backgroundColor: '#EF4444' },
+  active: { backgroundColor: "blue" },
+  muted: { backgroundColor: "#EF4444" },
 });

@@ -28,7 +28,7 @@ export function Status({ statuses }: { statuses: Status[] }) {
 
       acc[key].statuses.push(status);
       return acc;
-    }, {})
+    }, {}),
   );
 
   return (
@@ -50,10 +50,7 @@ export function Status({ statuses }: { statuses: Status[] }) {
         <CreateStatus />
 
         {groupedStatuses.map((userStatus: any) => (
-          <StatusItem
-            key={userStatus.user.name}
-            userStatus={userStatus}
-          />
+          <StatusItem key={userStatus.user.name} userStatus={userStatus} />
         ))}
       </ScrollView>
     </View>

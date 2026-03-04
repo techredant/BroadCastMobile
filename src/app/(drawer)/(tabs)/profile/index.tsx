@@ -1,9 +1,22 @@
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Pressable, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  Pressable,
+  Dimensions,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
 import { MediaViewerModal } from "@/components/posts/MediaViewModal";
-import { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
 import { useLevel } from "../../../../../context/LevelContext";
 import { useUserContext } from "../../../../../context/FollowContext";
@@ -15,23 +28,26 @@ const BASE_URL = "https://cast-api-zeta.vercel.app";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2; // optional spacing between items
 const NUM_COLUMNS = 3;
-const POST_SIZE = (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
+const POST_SIZE =
+  (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
 
 export default function ProfileScreen() {
   const { members, currentUserId, toggleFollow } = useUserContext();
   const { userDetails, isLoadingUser, currentLevel } = useLevel();
-    const [posts, setPosts] = useState<any[]>([]);
-    const [refreshing, setRefreshing] = useState(false);
-      const [modalVisible, setModalVisible] = useState(false);
-      const [selectedIndex, setSelectedIndex] = useState(0);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
- const openMedia = (index: number) => {
-  setSelectedIndex(index);
-  setModalVisible(true);
-};
+  const openMedia = (index: number) => {
+    setSelectedIndex(index);
+    setModalVisible(true);
+  };
 
   // -------------------- Prepare followers/following --------------------
-  const followersData = members.filter((m) => m.followers.includes(userDetails?.clerkId));
+  const followersData = members.filter((m) =>
+    m.followers.includes(userDetails?.clerkId),
+  );
   const followingData = members.filter((m) => m.isFollowing);
 
   // -------------------- Flatten media posts --------------------
@@ -50,25 +66,24 @@ export default function ProfileScreen() {
     "posts" | "followers" | "following"
   >("posts");
 
-const fetchPosts = useCallback(async () => {
-  if (!userDetails?.clerkId) return;
+  const fetchPosts = useCallback(async () => {
+    if (!userDetails?.clerkId) return;
 
-  try {
-    const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
+    try {
+      const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
 
-    const res = await axios.get(url);
-    setPosts(res.data ?? []);
-  } catch (err) {
-    console.error("❌ Error fetching posts:", err);
-  } finally {
-    setRefreshing(false);
-  }
-}, [currentLevel, userDetails?.clerkId]);
+      const res = await axios.get(url);
+      setPosts(res.data ?? []);
+    } catch (err) {
+      console.error("❌ Error fetching posts:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [currentLevel, userDetails?.clerkId]);
 
-useEffect(() => {
-  fetchPosts();
-}, [fetchPosts]);
-
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   // /* ---------------- PINCH ZOOM ---------------- */
   const pinchScale = useSharedValue(1);
@@ -85,14 +100,12 @@ useEffect(() => {
     transform: [{ scale: pinchScale.value }],
   }));
 
-
-// Pull-to-refresh
-const onRefresh = () => {
-  setRefreshing(true);
-  fetchPosts();
-};
-const {theme} = useTheme()
-
+  // Pull-to-refresh
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchPosts();
+  };
+  const { theme } = useTheme();
 
   if (isLoadingUser) {
     return (
@@ -102,39 +115,48 @@ const {theme} = useTheme()
     );
   }
 
+  const renderItem = ({ item, index }: any) => {
+    if (activeTab === "posts") {
+      const isVideo = item.endsWith(".mp4") || item.endsWith(".mov");
 
-const renderItem = ({ item, index }: any) => {
-  if (activeTab === "posts") {
-    const isVideo = item.endsWith(".mp4") || item.endsWith(".mov");
+      return (
+        <Pressable onPress={() => openMedia(index)}>
+          {isVideo ? (
+            <Video
+              source={{ uri: item }}
+              style={styles.postImage}
+              resizeMode="cover"
+              repeat
+              paused={false}
+              muted
+            />
+          ) : (
+            <Image source={{ uri: item }} style={styles.postImage} />
+          )}
+        </Pressable>
+      );
+    }
 
     return (
-      <Pressable onPress={() => openMedia(index)}>
-        {isVideo ? (
-          <Video
-            source={{ uri: item }}
-            style={styles.postImage}
-            resizeMode="cover"
-            repeat
-            paused={false}
-            muted
-          />
-        ) : (
-          <Image source={{ uri: item }} style={styles.postImage} />
-        )}
-      </Pressable>
-    );
-  }
-
-   return (
       <View
-        style={[styles.userRow, { width: "100%", justifyContent: "space-between", backgroundColor: theme.background }]}
+        style={[
+          styles.userRow,
+          {
+            width: "100%",
+            justifyContent: "space-between",
+            backgroundColor: theme.background,
+          },
+        ]}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image source={{ uri: item?.image }} style={styles.userAvatar} />
-          {item.firstName ?
-          <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>:(
-          <Text style={styles.userName}>{item.companyName}</Text>
-           )}
+          {item.firstName ? (
+            <Text style={styles.userName}>
+              {item.firstName} {item.lastName}
+            </Text>
+          ) : (
+            <Text style={styles.userName}>{item.companyName}</Text>
+          )}
         </View>
 
         <TouchableOpacity
@@ -159,12 +181,10 @@ const renderItem = ({ item, index }: any) => {
         </TouchableOpacity>
       </View>
     );
-};
-
-
+  };
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.background}]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <View style={styles.header}>
         <Image
@@ -178,7 +198,9 @@ const renderItem = ({ item, index }: any) => {
         />
 
         <View style={styles.bio}>
-          <Text style={[styles.name, {color: theme.text}]}>{userDetails?.firstName}</Text>
+          <Text style={[styles.name, { color: theme.text }]}>
+            {userDetails?.firstName}
+          </Text>
           <Text style={styles.username}>@{userDetails?.nickName}</Text>
         </View>
 
@@ -232,27 +254,29 @@ const renderItem = ({ item, index }: any) => {
       </View>
 
       {/* Content */}
-    <FlatList
-  style={{ flex: 1 }}
-  contentContainerStyle={{ paddingBottom: 140, flexDirection: "row" }}
-  data={getData()}
-  key={activeTab}
-  keyExtractor={(item, index) => index.toString()}
-  numColumns={activeTab === "posts" ? 3 : 1} // 3 columns
-  renderItem={renderItem}
-  showsVerticalScrollIndicator={false}
-/>
+      <FlatList
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 140, flexDirection: "row" }}
+        data={getData()}
+        key={activeTab}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={activeTab === "posts" ? 3 : 1} // 3 columns
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+      />
 
-  {/* MEDIA MODAL */}
+      {/* MEDIA MODAL */}
       <MediaViewerModal
-  modalVisible={modalVisible}
-  setModalVisible={setModalVisible}
-  mediaList={mediaPosts}          // pass all media
-  selectedIndex={selectedIndex}
-  post={posts.find(p => p.media && p.media.includes(mediaPosts[selectedIndex]))} 
-  pinchGesture={pinchGesture}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        mediaList={mediaPosts} // pass all media
+        selectedIndex={selectedIndex}
+        post={posts.find(
+          (p) => p.media && p.media.includes(mediaPosts[selectedIndex]),
+        )}
+        pinchGesture={pinchGesture}
         pinchStyle={pinchStyle}
-/>
+      />
     </View>
   );
 }
@@ -309,7 +333,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginVertical: 12,
   },
-   followButton: { paddingVertical: 6, paddingHorizontal: 16, borderRadius: 20 },
+  followButton: { paddingVertical: 6, paddingHorizontal: 16, borderRadius: 20 },
   primaryBtn: {
     flex: 1,
     backgroundColor: "#1DA1F2",
@@ -337,29 +361,27 @@ const styles = StyleSheet.create({
     width: POST_SIZE,
     height: POST_SIZE,
     margin: POST_MARGIN,
-},
+  },
 
   userRow: {
-  flexDirection: "row",
-  alignItems: "center",
-  padding: 12,
-  borderBottomWidth: 1,
-  borderColor: "#eee",
-},
-userAvatar: {
-  width: 40,
-  height: 40,
-  borderRadius: 20,
-  marginRight: 12,
-},
-userName: {
-  fontSize: 16,
-  fontWeight: "500",
-},
-activeLabel: {
-  color: "#1DA1F2",
-  fontWeight: "bold",
-},
-
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  activeLabel: {
+    color: "#1DA1F2",
+    fontWeight: "bold",
+  },
 });
-

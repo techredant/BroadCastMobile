@@ -4,7 +4,6 @@ import { GoLiveButton } from "./GoLiveButton";
 import { ToggleMicButton } from "./ToggleMicButton";
 import { ToggleLiveButton } from "./ToggleLiveButton";
 
-
 type Props = {
   isLive: boolean;
   onGoLivePress?: () => void;

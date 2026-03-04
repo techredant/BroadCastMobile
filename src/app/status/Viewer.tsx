@@ -15,17 +15,21 @@ export default function StatusViewer() {
 
   // group statuses
   const grouped = Object.values(
-    allStatuses.reduce((acc: { [x: string]: { user: any; statuses: any[]; }; }, status: { user: { name: any; }; }) => {
-      const key = status.user.name;
-      if (!acc[key]) acc[key] = { user: status.user, statuses: [] };
-      acc[key].statuses.push(status);
-      return acc;
-    }, {})
+    allStatuses.reduce(
+      (
+        acc: { [x: string]: { user: any; statuses: any[] } },
+        status: { user: { name: any } },
+      ) => {
+        const key = status.user.name;
+        if (!acc[key]) acc[key] = { user: status.user, statuses: [] };
+        acc[key].statuses.push(status);
+        return acc;
+      },
+      {},
+    ),
   );
 
-  const userIndex = grouped.findIndex(
-    (u: any) => u.user.name === user
-  );
+  const userIndex = grouped.findIndex((u: any) => u.user.name === user);
 
   const [currentUserIndex, setCurrentUserIndex] = useState(userIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
@@ -41,9 +45,9 @@ export default function StatusViewer() {
 
   function nextStatus() {
     if (currentStatusIndex < currentUser.statuses.length - 1) {
-      setCurrentStatusIndex(i => i + 1);
+      setCurrentStatusIndex((i) => i + 1);
     } else if (currentUserIndex < grouped.length - 1) {
-      setCurrentUserIndex(i => i + 1);
+      setCurrentUserIndex((i) => i + 1);
       setCurrentStatusIndex(0);
     } else {
       router.back();
@@ -52,10 +56,10 @@ export default function StatusViewer() {
 
   function prevStatus() {
     if (currentStatusIndex > 0) {
-      setCurrentStatusIndex(i => i - 1);
+      setCurrentStatusIndex((i) => i - 1);
     } else if (currentUserIndex > 0) {
       const prevUser = grouped[currentUserIndex - 1] as any;
-      setCurrentUserIndex(i => i - 1);
+      setCurrentUserIndex((i) => i - 1);
       setCurrentStatusIndex(prevUser.statuses.length - 1);
     }
   }

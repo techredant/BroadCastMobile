@@ -67,7 +67,9 @@ const CallScreen = () => {
       <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 items-center justify-center gap-4">
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text className="mt-2 text-base text-foreground-muted">Starting call...</Text>
+          <Text className="mt-2 text-base text-foreground-muted">
+            Starting call...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -93,7 +95,11 @@ function CallUI() {
   }, [callingState, router, call]);
 
   // show ringing UI for RINGING, JOINING, and IDLE states
-  if ([CallingState.RINGING, CallingState.JOINING, CallingState.IDLE].includes(callingState)) {
+  if (
+    [CallingState.RINGING, CallingState.JOINING, CallingState.IDLE].includes(
+      callingState,
+    )
+  ) {
     return (
       <SafeAreaView className="flex-1 bg-background">
         {isCallCreatedByMe ? <OutgoingCall /> : <IncomingCall />}
@@ -122,8 +128,13 @@ function ErrorCallUI({ error }: { error: string }) {
       <View className="flex-1 items-center justify-center gap-4">
         <Ionicons name="alert-circle-outline" size={48} color={COLORS.danger} />
         <Text className="mt-2 text-base text-foreground">{error}</Text>
-        <Pressable className="mt-4 rounded-xl bg-primary px-6 py-3" onPress={() => router.back()}>
-          <Text className="text-[15px] font-semibold text-foreground">Go Back</Text>
+        <Pressable
+          className="mt-4 rounded-xl bg-primary px-6 py-3"
+          onPress={() => router.back()}
+        >
+          <Text className="text-[15px] font-semibold text-foreground">
+            Go Back
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>

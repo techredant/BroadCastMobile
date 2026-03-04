@@ -23,7 +23,7 @@ import { useTheme } from "../../../../context/ThemeContext";
 import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
 
 
-const BASE_URL = "https://cast-api-zeta.vercel.app";
+const BASE_URL = "https://backend-api.redanttech.com";
 
 export default function HomeScreen() {
   const { currentLevel } = useLevel();
@@ -196,3 +196,64 @@ const fetchPosts = useCallback(async () => {
   );
 }
 
+// import React from "react";
+// import { View, Text, FlatList, RefreshControl, StatusBar } from "react-native";
+// import { useLevel } from "../../../../context/LevelContext";
+// import { PostCard } from "@/components/posts/PostCard";
+// import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
+// import { useTheme } from "../../../../context/ThemeContext";
+// import { Status } from "@/app/status/Status";
+// import SAMPLE_STATUSES from "@/assets/data/SampleStatuses.json";
+// import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
+
+
+// export default function HomeScreen() {
+//   const { posts, loadingPosts, socket, currentLevel } = useLevel();
+//   const { theme, isDark } = useTheme();
+
+//     const rawLevelValue =
+//     typeof currentLevel === "object"
+//       ? currentLevel?.value
+//       : currentLevel ?? "home";
+
+//   const levelType =
+//     typeof currentLevel === "object"
+//       ? currentLevel?.type
+//       : null;
+
+//   // 🔥 Convert "home" → "national"
+//   const displayValue =
+//     rawLevelValue?.toLowerCase() === "home"
+//       ? "national"
+//       : rawLevelValue ?? "national";
+
+//   const formattedLevel =
+//     displayValue.charAt(0).toUpperCase() + displayValue.slice(1);
+
+
+//   return (
+//     <View style={{ flex: 1, backgroundColor: theme.background }}>
+//       <StatusBar translucent backgroundColor="transparent" barStyle={isDark ? "light-content" : "dark-content"} />
+//       <DrawerMenuButton />
+//       <FlatList
+//         data={posts}
+//         keyExtractor={(item) => item._id.toString()}
+//         renderItem={({ item }) => <PostCard post={item} socket={socket} isVisible />}
+//         contentContainerStyle={{ paddingBottom: 120 }}
+//                 ListHeaderComponent={
+//                          <><View
+//             className="px-4 py-2 justify-center items-center mt-8"
+//             style={{ backgroundColor: theme.background }}
+//           >
+//             <Text className="font-bold text-2xl" style={{ color: theme.text, fontSize: 18, marginTop: 14 }}>
+//               {formattedLevel}
+//               {levelType && levelType !== "home" ? ` ${levelType}` : ""}
+//             </Text>
+//           </View><Status statuses={SAMPLE_STATUSES} /></>}
+//         refreshControl={<RefreshControl refreshing={loadingPosts} onRefresh={() => {}} />}
+//         ListEmptyComponent={<Text style={{ textAlign: "center", marginTop: 20 }}>{loadingPosts ? `Loading ${currentLevel.value} posts...` : `No posts for ${currentLevel.value}`}</Text>}
+//       />
+//       <FloatingLevelButton />
+//     </View>
+//   );
+// }

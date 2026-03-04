@@ -127,124 +127,133 @@ const SettingsScreen = () => {
   };
 
   return (
-
-              <>
-              <DrawerMenuButton />
-              <ScrollView
-      contentContainerStyle={[
-        styles.scrollContainer,
-        { backgroundColor: theme.background },
-      ]}
-    >
-      <Text
-        style={{
-          fontSize: 22,
-          fontWeight: "700",
-          textAlign: "center",
-          paddingBottom: 20,
-          color: theme.text,
-        }}
+    <>
+      <DrawerMenuButton />
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContainer,
+          { backgroundColor: theme.background },
+        ]}
       >
-        Settings & Activity
-      </Text>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: "700",
+            textAlign: "center",
+            paddingBottom: 20,
+            color: theme.text,
+          }}
+        >
+          Settings & Activity
+        </Text>
 
-      {/* ----------------------------- Account ----------------------------- */}
-      <Section title="Account">
-        <Row
-          label="Edit Profile"
-          icon={<Feather name="user" size={20} color={theme.text} />}
-          // onPress={() => router.push("/(auth)/nameScreen")} 
+        {/* ----------------------------- Account ----------------------------- */}
+        <Section title="Account">
+          <Row
+            label="Edit Profile"
+            icon={<Feather name="user" size={20} color={theme.text} />}
+            // onPress={() => router.push("/(auth)/nameScreen")}
           />
 
-        <Row
-          label={isDark ? "Light Mode" : "Dark Mode"}
-          icon={<Feather
-            name={isDark ? "sun" : "moon"}
-            size={20}
-            color={theme.text} />}
-          rightElement={<Switch value={isDark} onValueChange={toggleTheme} />} />
-      </Section>
+          <Row
+            label={isDark ? "Light Mode" : "Dark Mode"}
+            icon={
+              <Feather
+                name={isDark ? "sun" : "moon"}
+                size={20}
+                color={theme.text}
+              />
+            }
+            rightElement={<Switch value={isDark} onValueChange={toggleTheme} />}
+          />
+        </Section>
 
-      {/* --------------------------- Preferences --------------------------- */}
-      <Section title="Preferences">
-        <Row
-          label="Notifications"
-          icon={<Ionicons
-            name="notifications-outline"
-            size={20}
-            color={theme.text} />}
-          // onPress={() => router.push("/drawerPages/Notifications")} 
+        {/* --------------------------- Preferences --------------------------- */}
+        <Section title="Preferences">
+          <Row
+            label="Notifications"
+            icon={
+              <Ionicons
+                name="notifications-outline"
+                size={20}
+                color={theme.text}
+              />
+            }
+            // onPress={() => router.push("/drawerPages/Notifications")}
           />
 
-        <Row
-          label="Privacy"
-          icon={<Feather name="shield" size={20} color={theme.text} />}
-          // onPress={() => router.push("/drawerPages/Privacy")} 
+          <Row
+            label="Privacy"
+            icon={<Feather name="shield" size={20} color={theme.text} />}
+            // onPress={() => router.push("/drawerPages/Privacy")}
           />
-      </Section>
+        </Section>
 
-      {/* ----------------------------- Support ----------------------------- */}
-      <Section title="Support">
-        <Row
-          label="Help Center"
-          icon={<Feather name="help-circle" size={20} color={theme.text} />}
-          onPress={() => { } } />
-
-        <Row
-          label="About"
-          icon={<Feather name="info" size={20} color={theme.text} />}
-          // onPress={() => router.push("/drawerPages/About")} 
+        {/* ----------------------------- Support ----------------------------- */}
+        <Section title="Support">
+          <Row
+            label="Help Center"
+            icon={<Feather name="help-circle" size={20} color={theme.text} />}
+            onPress={() => {}}
           />
-      </Section>
 
-      {/* ------------------------------ Logout ----------------------------- */}
-      <Section>
-        <Row
-          label="Log Out"
-          icon={<MaterialIcons name="logout" size={20} color="red" />}
-          destructive
-          onPress={() => setVisible(true)} />
-      </Section>
+          <Row
+            label="About"
+            icon={<Feather name="info" size={20} color={theme.text} />}
+            // onPress={() => router.push("/drawerPages/About")}
+          />
+        </Section>
 
-      {/* --------------------------- Logout Modal --------------------------- */}
-      <Modal
-        transparent
-        animationType="fade"
-        visible={visible}
-        onRequestClose={() => setVisible(false)}
-      >
-        <View style={styles.overlay}>
-          <View style={[styles.modal, { backgroundColor: theme.card }]}>
-            <Text style={[styles.title, { color: theme.text }]}>Log Out</Text>
-            <Text style={[styles.message, { color: theme.text }]}>
-              Are you sure you want to log out?
-            </Text>
+        {/* ------------------------------ Logout ----------------------------- */}
+        <Section>
+          <Row
+            label="Log Out"
+            icon={<MaterialIcons name="logout" size={20} color="red" />}
+            destructive
+            onPress={() => setVisible(true)}
+          />
+        </Section>
 
-            <View style={styles.actions}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.cancel,
-                  { backgroundColor: theme.border },
-                ]}
-                onPress={() => setVisible(false)}
-              >
-                <Text style={[styles.cancelText, { color: theme.text }]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
+        {/* --------------------------- Logout Modal --------------------------- */}
+        <Modal
+          transparent
+          animationType="fade"
+          visible={visible}
+          onRequestClose={() => setVisible(false)}
+        >
+          <View style={styles.overlay}>
+            <View style={[styles.modal, { backgroundColor: theme.card }]}>
+              <Text style={[styles.title, { color: theme.text }]}>Log Out</Text>
+              <Text style={[styles.message, { color: theme.text }]}>
+                Are you sure you want to log out?
+              </Text>
 
-              <TouchableOpacity
-                style={[styles.button, styles.logout]}
-                onPress={handleConfirmLogout}
-              >
-                <Text style={styles.logoutText}>Log Out</Text>
-              </TouchableOpacity>
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.cancel,
+                    { backgroundColor: theme.border },
+                  ]}
+                  onPress={() => setVisible(false)}
+                >
+                  <Text style={[styles.cancelText, { color: theme.text }]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.button, styles.logout]}
+                  onPress={handleConfirmLogout}
+                >
+                  <Text style={styles.logoutText}>Log Out</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </ScrollView></>
+        </Modal>
+      </ScrollView>
+    </>
   );
 };
 

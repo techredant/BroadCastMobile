@@ -10,7 +10,11 @@ type ExploreUserCardProps = {
   onStartChat: (targetId: string) => void;
 };
 
-const ExploreUserCard = ({ item, creating, onStartChat }: ExploreUserCardProps) => {
+const ExploreUserCard = ({
+  item,
+  creating,
+  onStartChat,
+}: ExploreUserCardProps) => {
   return (
     <Pressable
       className="flex-row items-center bg-surface rounded-2xl p-3.5 mb-2.5 border border-border gap-3.5"
@@ -29,7 +33,10 @@ const ExploreUserCard = ({ item, creating, onStartChat }: ExploreUserCardProps) 
 
       {/* User info */}
       <View className="flex-1">
-        <Text className="text-base font-semibold text-foreground" numberOfLines={1}>
+        <Text
+          className="text-base font-semibold text-foreground"
+          numberOfLines={1}
+        >
           {item.name || item.id}
         </Text>
         <Text className="text-xs text-foreground-muted mt-0.5">

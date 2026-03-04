@@ -1,11 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+import { View, Text, FlatList, Pressable, StyleSheet } from "react-native";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 import { useLevel } from "../../../context/LevelContext";
 import { useTheme } from "../../../context/ThemeContext";
@@ -22,47 +16,46 @@ export default function TrendsScreen() {
   const { theme } = useTheme();
 
   // Mock trends (replace with API later)
-  const trends: Trend[] = useMemo(() => [
-    {
-      id: "1",
-      category: "Politics · Trending",
-      title: "#FinanceBill2026",
-      posts: 12400,
-    },
-    {
-      id: "2",
-      category: "Kenya · Trending",
-      title: "IEBC Reform",
-      posts: 8400,
-    },
-    {
-      id: "3",
-      category: "County · Trending",
-      title: "Governor Debate",
-      posts: 5200,
-    },
-    {
-      id: "4",
-      category: "National · Trending",
-      title: "Fuel Prices",
-      posts: 9700,
-    },
-    {
-      id: "5",
-      category: "Civic · Trending",
-      title: "Youth Empowerment",
-      posts: 3100,
-    },
-  ], []);
+  const trends: Trend[] = useMemo(
+    () => [
+      {
+        id: "1",
+        category: "Politics · Trending",
+        title: "#FinanceBill2026",
+        posts: 12400,
+      },
+      {
+        id: "2",
+        category: "Kenya · Trending",
+        title: "IEBC Reform",
+        posts: 8400,
+      },
+      {
+        id: "3",
+        category: "County · Trending",
+        title: "Governor Debate",
+        posts: 5200,
+      },
+      {
+        id: "4",
+        category: "National · Trending",
+        title: "Fuel Prices",
+        posts: 9700,
+      },
+      {
+        id: "5",
+        category: "Civic · Trending",
+        title: "Youth Empowerment",
+        posts: 3100,
+      },
+    ],
+    [],
+  );
 
   const renderTrend = ({ item, index }: { item: Trend; index: number }) => (
-    <Pressable
-      style={[styles.trendItem, { borderBottomColor: theme.border }]}
-    >
+    <Pressable style={[styles.trendItem, { borderBottomColor: theme.border }]}>
       <View style={{ flexDirection: "row" }}>
-        <Text style={[styles.rank, { color: theme.subtext }]}>
-          {index + 1}
-        </Text>
+        <Text style={[styles.rank, { color: theme.subtext }]}>{index + 1}</Text>
 
         <View style={{ marginLeft: 12, flex: 1 }}>
           <Text style={[styles.category, { color: theme.subtext }]}>
@@ -110,10 +103,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    
     paddingBottom: 16,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 24,
@@ -146,5 +138,3 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
-
-

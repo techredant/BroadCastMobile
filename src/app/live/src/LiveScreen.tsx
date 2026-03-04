@@ -28,25 +28,24 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 type Props = { goToHomeScreen: () => void; callId: string };
 
 export default function LiveScreen({ goToHomeScreen, callId }: Props) {
-     const client = useStreamVideoClient();
-   
- const call = useMemo(() => {
-  if (!client) return null;
-  return client.call("livestream", callId);
-}, [client, callId]);
+  const client = useStreamVideoClient();
 
+  const call = useMemo(() => {
+    if (!client) return null;
+    return client.call("livestream", callId);
+  }, [client, callId]);
 
   useEffect(() => {
     let mounted = true;
 
     const startCall = async () => {
-        if (!call) return null;
+      if (!call) return null;
 
       try {
         await call.join({ create: true });
@@ -73,18 +72,16 @@ export default function LiveScreen({ goToHomeScreen, callId }: Props) {
   }, [call]);
 
   return (
-
     // <StreamVideo client={client}>
-      <StreamCall call={call}>
-           <StatusBar
-      translucent
-      backgroundColor="transparent"
-      barStyle="dark-content"
-    />
-          <TikTokLive />
-          <CallControls />
-        
-      </StreamCall>
+    <StreamCall call={call}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <TikTokLive />
+      <CallControls />
+    </StreamCall>
     // </StreamVideo>
   );
 }
@@ -92,11 +89,8 @@ export default function LiveScreen({ goToHomeScreen, callId }: Props) {
 /* =========================================================
    TIKTOK LIVE SCREEN
 ========================================================= */
-;
-
 const TikTokLive = () => {
-  const { useLocalParticipant, useParticipantCount } =
-    useCallStateHooks();
+  const { useLocalParticipant, useParticipantCount } = useCallStateHooks();
 
   const participant = useLocalParticipant();
   const viewers = useParticipantCount();
@@ -145,30 +139,26 @@ const TikTokLive = () => {
   };
 
   return (
-     <View style={{ flex: 1, backgroundColor: "black" }}>
-    <StatusBar
-      translucent
-      backgroundColor="transparent"
-      barStyle="light-content"
-    />
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
 
-    <Pressable style={{ flex: 1 }} onPress={handleTap}>
-      {participant && (
-        <VideoRenderer
-          participant={participant}
-          trackType="videoTrack"
-          style={{ flex: 1 }}
-        />
-      )}
-    </Pressable>
+      <Pressable style={{ flex: 1 }} onPress={handleTap}>
+        {participant && (
+          <VideoRenderer
+            participant={participant}
+            trackType="videoTrack"
+            style={{ flex: 1 }}
+          />
+        )}
+      </Pressable>
 
       {/* FLOATING REACTIONS */}
       {reactions.map((r) => (
-        <AnimatedReaction
-          key={r.id}
-          emoji={r.emoji}
-          left={r.left}
-        />
+        <AnimatedReaction key={r.id} emoji={r.emoji} left={r.left} />
       ))}
 
       {/* TOP BAR */}
@@ -183,9 +173,7 @@ const TikTokLive = () => {
       <View style={styles.rightBar}>
         {["❤️", "👍", "👏", "🎉"].map((emoji) => (
           <Pressable key={emoji} onPress={() => sendReaction(emoji)}>
-            <Text style={{ fontSize: 28, marginBottom: 12 }}>
-              {emoji}
-            </Text>
+            <Text style={{ fontSize: 28, marginBottom: 12 }}>{emoji}</Text>
           </Pressable>
         ))}
       </View>
@@ -196,51 +184,51 @@ const TikTokLive = () => {
   style={{ flex: 1 }}
   keyboardVerticalOffset={80}
 > */}
-  <LinearGradient
-    colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.6)"]}
-    style={styles.chatContainer}
-  >
-    {/* CHAT LIST */}
-    <FlatList
-      data={messages}
-      keyExtractor={(item) => item.id}
-      inverted   // 🔥 newest at bottom
-      contentContainerStyle={{
-        paddingBottom: 10,
-      }}
-      renderItem={({ item, index }) => {
-        const fadeOpacity = 1 - index * 0.15; // fade older messages
+      <LinearGradient
+        colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.6)"]}
+        style={styles.chatContainer}
+      >
+        {/* CHAT LIST */}
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          inverted // 🔥 newest at bottom
+          contentContainerStyle={{
+            paddingBottom: 10,
+          }}
+          renderItem={({ item, index }) => {
+            const fadeOpacity = 1 - index * 0.15; // fade older messages
 
-        return (
-          <Text
-            style={[
-              styles.chatMessage,
-              {
-                opacity: fadeOpacity < 0 ? 0 : fadeOpacity,
-              },
-            ]}
-          >
-            {item.text}
-          </Text>
-        );
-      }}
-    />
+            return (
+              <Text
+                style={[
+                  styles.chatMessage,
+                  {
+                    opacity: fadeOpacity < 0 ? 0 : fadeOpacity,
+                  },
+                ]}
+              >
+                {item.text}
+              </Text>
+            );
+          }}
+        />
 
-    {/* INPUT ROW */}
-    <View style={styles.inputRow}>
-      <TextInput
-        placeholder="Say something..."
-        placeholderTextColor="#aaa"
-        value={input}
-        onChangeText={setInput}
-        style={styles.input}
-      />
-      <Pressable onPress={sendMessage}>
-        <Text style={styles.sendText}>Send</Text>
-      </Pressable>
-    </View>
-  </LinearGradient>
-{/* </KeyboardAvoidingView> */}
+        {/* INPUT ROW */}
+        <View style={styles.inputRow}>
+          <TextInput
+            placeholder="Say something..."
+            placeholderTextColor="#aaa"
+            value={input}
+            onChangeText={setInput}
+            style={styles.input}
+          />
+          <Pressable onPress={sendMessage}>
+            <Text style={styles.sendText}>Send</Text>
+          </Pressable>
+        </View>
+      </LinearGradient>
+      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
@@ -248,13 +236,7 @@ const TikTokLive = () => {
 /* =========================================================
    FLOATING HEART
 ========================================================= */
-const AnimatedReaction = ({
-  left,
-  emoji,
-}: {
-  left: number;
-  emoji: string;
-}) => {
+const AnimatedReaction = ({ left, emoji }: { left: number; emoji: string }) => {
   const y = useSharedValue(0);
   const opacity = useSharedValue(1);
 
@@ -272,9 +254,7 @@ const AnimatedReaction = ({
   }));
 
   return (
-    <Animated.Text style={[style, { fontSize: 30 }]}>
-      {emoji}
-    </Animated.Text>
+    <Animated.Text style={[style, { fontSize: 30 }]}>{emoji}</Animated.Text>
   );
 };
 const [reactions, setReactions] = useState<
@@ -307,18 +287,20 @@ const sendReaction = (emoji: string) => {
       <Text style={{ fontSize: 28 }}>{emoji}</Text>
     </Pressable>
   ))}
-</View>
+</View>;
 
-{reactions.map((r) => (
-  <AnimatedReaction key={r.id} emoji={r.emoji} left={r.left} />
-))}
+{
+  reactions.map((r) => (
+    <AnimatedReaction key={r.id} emoji={r.emoji} left={r.left} />
+  ));
+}
 
 /* =========================================================
    STYLES
 ========================================================= */
 
 const styles = StyleSheet.create({
-  container: { flex: 1},
+  container: { flex: 1 },
 
   topBar: {
     position: "absolute",
@@ -352,7 +334,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-   chatContainer: {
+  chatContainer: {
     position: "absolute",
     bottom: 0,
     width: "80%",

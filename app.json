@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "broadcast",
+    "name": "Broadcast",
     "slug": "broadcast",
-    "version": "1.0.0",
+    "version": "2.1.22",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "broadcast",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/images/icon.png",
-      "bundleIdentifier": "com.burakorkmez.study-buddy",
+      // "bundleIdentifier": "com.burakorkmez.study-buddy",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/icon.png",
         "backgroundImage": "./assets/images/icon.png",
         "monochromeImage": "./assets/images/icon.png"
@@ -49,12 +49,7 @@
         "android.permission.INTERNET",
         "android.permission.SYSTEM_ALERT_WINDOW"
       ],
-      "package": "com.burakorkmez.studybuddy"
-    },
-    "web": {
-      "output": "server",
-      "favicon": "./assets/images/icon.png",
-      "bundler": "metro"
+      "package": "com.ant_apps.BroadCast"
     },
     "plugins": [
       "expo-router",
@@ -90,19 +85,11 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#000000",
           "android": {
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 76
+            "image": "./assets/images/icon.png",
+            "imageWidth": 200
           }
-        }
-      ],
-      [
-        "@sentry/react-native/expo",
-        {
-          "url": "https://sentry.io/",
-          "project": "study-app",
-          "organization": "codesistency-gs"
         }
       ],
       "expo-audio"

@@ -1,27 +1,33 @@
-import { useCallStateHooks } from '@stream-io/video-react-native-sdk';
-import React from 'react';
-import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
+import { useCallStateHooks } from "@stream-io/video-react-native-sdk";
+import React from "react";
+import { StyleSheet, Text, View, FlatList, Image } from "react-native";
 
 export default function AudioRoomParticipants() {
-      const { useParticipants } = useCallStateHooks();
+  const { useParticipants } = useCallStateHooks();
   const participants = useParticipants();
 
   return (
     <View style={styles.container}>
-     <FlatList
+      <FlatList
         numColumns={3}
         data={participants}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={styles.avatar}>
-            <Image  style={[styles.image, item.isSpeaking && styles.activeSpeakerIndicator]} source={{uri: item.image}} />
+            <Image
+              style={[
+                styles.image,
+                item.isSpeaking && styles.activeSpeakerIndicator,
+              ]}
+              source={{ uri: item.image }}
+            />
             <Text style={styles.name}>{item.name}</Text>
           </View>
         )}
-        keyExtractor={item => item.sessionId}
+        keyExtractor={(item) => item.sessionId}
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -30,15 +36,15 @@ const styles = StyleSheet.create({
   },
   name: {
     marginTop: 4,
-    color: 'black',
+    color: "black",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   avatar: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 4,
-    borderColor: 'transparent',
+    borderColor: "transparent",
   },
   image: {
     width: 80,
@@ -47,6 +53,6 @@ const styles = StyleSheet.create({
   },
   activeSpeakerIndicator: {
     borderWidth: 4,
-    borderColor: 'green',
+    borderColor: "green",
   },
 });

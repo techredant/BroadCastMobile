@@ -32,9 +32,7 @@ export function StatusItem({ userStatus }: StatusItemProps) {
 
   return (
     <Pressable
-      onPress={() =>
-        router.push(`/status/Viewer?user=${userStatus.user.name}`)
-      }
+      onPress={() => router.push(`/status/Viewer?user=${userStatus.user.name}`)}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       hitSlop={10}

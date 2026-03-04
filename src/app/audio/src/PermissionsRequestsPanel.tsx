@@ -1,14 +1,26 @@
-import { OwnCapability, PermissionRequestEvent, useCall, useCallStateHooks } from '@stream-io/video-react-native-sdk';
-import React, { useEffect, useState } from 'react';
-import { Text, Button, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  OwnCapability,
+  PermissionRequestEvent,
+  useCall,
+  useCallStateHooks,
+} from "@stream-io/video-react-native-sdk";
+import React, { useEffect, useState } from "react";
+import { Text, Button, ScrollView, StyleSheet, View } from "react-native";
 
 export const PermissionRequestsPanel = () => {
   const call = useCall();
   const { useHasPermissions } = useCallStateHooks();
-  const canUpdatePermissions = useHasPermissions(OwnCapability.UPDATE_CALL_PERMISSIONS);
-  const [speakingRequests, setSpeakingRequests] = useState<PermissionRequestEvent[]>([]);
+  const canUpdatePermissions = useHasPermissions(
+    OwnCapability.UPDATE_CALL_PERMISSIONS,
+  );
+  const [speakingRequests, setSpeakingRequests] = useState<
+    PermissionRequestEvent[]
+  >([]);
 
-  const handlePermissionRequest = async (request: PermissionRequestEvent, approve: boolean) => {
+  const handlePermissionRequest = async (
+    request: PermissionRequestEvent,
+    approve: boolean,
+  ) => {
     const { user, permissions } = request;
     try {
       if (approve) {
@@ -18,13 +30,13 @@ export const PermissionRequestsPanel = () => {
       }
       setSpeakingRequests((reqs) => reqs.filter((req) => req !== request));
     } catch (err) {
-      console.error('Error granting or revoking permissions', err);
+      console.error("Error granting or revoking permissions", err);
     }
   };
 
   useEffect(() => {
     if (!call || !canUpdatePermissions) return;
-    return call.on('call.permission_request', (request) => {
+    return call.on("call.permission_request", (request) => {
       setSpeakingRequests((requests) => [...requests, request]);
     });
   }, [call, canUpdatePermissions]);
@@ -33,10 +45,10 @@ export const PermissionRequestsPanel = () => {
 
   return (
     <ScrollView style={styles.scrollContainer}>
-      {speakingRequests.map(request => (
+      {speakingRequests.map((request) => (
         <View style={styles.itemContainer} key={request.user.id}>
           <Text style={styles.text} numberOfLines={2} ellipsizeMode="tail">
-            {`${request.user.name} requested to ${request.permissions.join(',')}`}
+            {`${request.user.name} requested to ${request.permissions.join(",")}`}
           </Text>
           <Button
             title="Approve"
@@ -54,17 +66,17 @@ export const PermissionRequestsPanel = () => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    width: '100%',
+    width: "100%",
     maxHeight: 60,
   },
   text: {
     flexShrink: 1,
   },
   itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
-    width: '100%',
+    width: "100%",
   },
 });

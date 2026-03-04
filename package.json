@@ -1,7 +1,7 @@
 {
   "name": "broadcast",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "2.1.22",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -21,7 +21,6 @@
     "@react-navigation/drawer": "^7.9.2",
     "@react-navigation/elements": "^2.8.1",
     "@react-navigation/native": "^7.1.28",
-    "@sentry/react-native": "~7.11.0",
     "@stream-io/react-native-webrtc": "^137.1.2",
     "@stream-io/video-react-native-sdk": "^1.29.4",
     "axios": "^1.13.6",
@@ -70,6 +69,7 @@
     "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
+    "@react-native-community/cli": "^20.1.2",
     "@types/react": "~19.2.2",
     "@types/react-native-typewriter": "^0.7.4",
     "eslint": "^9.25.0",

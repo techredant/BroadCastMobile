@@ -15,15 +15,20 @@ import Video from "react-native-video";
 import { useLocalSearchParams } from "expo-router";
 import { MediaViewerModal } from "@/components/posts/MediaViewModal";
 import { Gesture } from "react-native-gesture-handler";
-import { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import { useUserContext } from "../../../context/FollowContext";
 import { useLevel } from "../../../context/LevelContext";
 
-const BASE_URL = "https://cast-api-zeta.vercel.app";
+const BASE_URL = "https://backend-api.redanttech.com";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2;
 const NUM_COLUMNS = 3;
-const POST_SIZE = (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
+const POST_SIZE =
+  (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
 
 export default function ProfileScreen() {
   // -------------------- Params --------------------
@@ -36,7 +41,9 @@ export default function ProfileScreen() {
   const [posts, setPosts] = useState<any[]>([]);
   const [profileUser, setProfileUser] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
-  const [activeTab, setActiveTab] = useState<"posts" | "followers" | "following">("posts");
+  const [activeTab, setActiveTab] = useState<
+    "posts" | "followers" | "following"
+  >("posts");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -49,9 +56,15 @@ export default function ProfileScreen() {
 
   const pinchScale = useSharedValue(1);
   const pinchGesture = Gesture.Pinch()
-    .onUpdate((e) => { pinchScale.value = e.scale; })
-    .onEnd(() => { pinchScale.value = withSpring(1); });
-  const pinchStyle = useAnimatedStyle(() => ({ transform: [{ scale: pinchScale.value }] }));
+    .onUpdate((e) => {
+      pinchScale.value = e.scale;
+    })
+    .onEnd(() => {
+      pinchScale.value = withSpring(1);
+    });
+  const pinchStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pinchScale.value }],
+  }));
 
   // -------------------- Fetch Profile --------------------
   useEffect(() => {
@@ -81,7 +94,9 @@ export default function ProfileScreen() {
     }
   }, [currentLevel, userId]);
 
-  useEffect(() => { fetchPosts(); }, [fetchPosts]);
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   // -------------------- Prepare followers/following --------------------
   const followersData = members.filter((m) => m.followers.includes(userId));
@@ -125,11 +140,16 @@ export default function ProfileScreen() {
     // FOLLOWERS / FOLLOWING → 1 column
     return (
       <View
-        style={[styles.userRow, { width: "100%", justifyContent: "space-between" }]}
+        style={[
+          styles.userRow,
+          { width: "100%", justifyContent: "space-between" },
+        ]}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image source={{ uri: item.image }} style={styles.userAvatar} />
-          <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
+          <Text style={styles.userName}>
+            {item.firstName} {item.lastName}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -166,7 +186,11 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
       {/* Header */}
       <View style={styles.header}>
         <Image
@@ -190,7 +214,12 @@ export default function ProfileScreen() {
             onPress={() => setActiveTab("posts")}
           >
             <Text style={styles.statNumber}>{posts.length}</Text>
-            <Text style={[styles.statLabel, activeTab === "posts" && styles.activeLabel]}>
+            <Text
+              style={[
+                styles.statLabel,
+                activeTab === "posts" && styles.activeLabel,
+              ]}
+            >
               Posts
             </Text>
           </TouchableOpacity>
@@ -200,7 +229,12 @@ export default function ProfileScreen() {
             onPress={() => setActiveTab("followers")}
           >
             <Text style={styles.statNumber}>{followersData.length}</Text>
-            <Text style={[styles.statLabel, activeTab === "followers" && styles.activeLabel]}>
+            <Text
+              style={[
+                styles.statLabel,
+                activeTab === "followers" && styles.activeLabel,
+              ]}
+            >
               Followers
             </Text>
           </TouchableOpacity>
@@ -210,7 +244,12 @@ export default function ProfileScreen() {
             onPress={() => setActiveTab("following")}
           >
             <Text style={styles.statNumber}>{followingData.length}</Text>
-            <Text style={[styles.statLabel, activeTab === "following" && styles.activeLabel]}>
+            <Text
+              style={[
+                styles.statLabel,
+                activeTab === "following" && styles.activeLabel,
+              ]}
+            >
               Following
             </Text>
           </TouchableOpacity>
@@ -235,7 +274,9 @@ export default function ProfileScreen() {
         setModalVisible={setModalVisible}
         mediaList={mediaPosts}
         selectedIndex={selectedIndex}
-        post={posts.find(p => p.media && p.media.includes(mediaPosts[selectedIndex]))}
+        post={posts.find(
+          (p) => p.media && p.media.includes(mediaPosts[selectedIndex]),
+        )}
         pinchGesture={pinchGesture}
         pinchStyle={pinchStyle}
       />
@@ -245,18 +286,32 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", paddingTop: 40 },
-  header: { flexDirection: "column", paddingHorizontal: 16, alignItems: "center" },
+  header: {
+    flexDirection: "column",
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
   avatar: { width: 90, height: 90, borderRadius: 45 },
   bio: { paddingHorizontal: 16, marginTop: 10 },
   name: { fontWeight: "bold", fontSize: 16 },
   username: { color: "#666" },
-  stats: { width: "100%", flexDirection: "row", justifyContent: "space-around" },
+  stats: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
   statItem: { alignItems: "center" },
   statNumber: { fontSize: 18, fontWeight: "bold" },
   statLabel: { fontSize: 12, color: "#666" },
   activeLabel: { color: "#1DA1F2", fontWeight: "bold" },
   postImage: { width: POST_SIZE, height: POST_SIZE, margin: POST_MARGIN },
-  userRow: { flexDirection: "row", alignItems: "center", padding: 12, borderBottomWidth: 1, borderColor: "#eee" },
+  userRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
   userAvatar: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
   userName: { fontSize: 16, fontWeight: "500" },
   followButton: { paddingVertical: 6, paddingHorizontal: 16, borderRadius: 20 },

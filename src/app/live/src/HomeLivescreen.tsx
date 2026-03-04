@@ -32,7 +32,7 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
 
   const [calls, setCalls] = useState<Call[]>([]);
   const [loading, setLoading] = useState(true);
-   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
 
   // Fetch live rooms
@@ -57,8 +57,8 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
   }, [client]);
 
   const createTitle = () => {
-  setModalVisible(true);
-};
+    setModalVisible(true);
+  };
 
   const createRoom = async () => {
     if (!userDetails) return;
@@ -82,9 +82,7 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       {/* HEADER */}
       <Animated.View entering={FadeInUp}>
-         
         <View style={styles.header}>
-          
           <View>
             <Text style={[styles.level, { color: theme.text }]}>
               {currentLevel?.value?.toUpperCase()} Live Streams
@@ -94,30 +92,36 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
             </Text>
           </View>
 
-          <View style={{ position: "relative",
-  padding: 6,}}>
-  <Ionicons name="notifications-outline" size={24} color={theme.text} />
+          <View style={{ position: "relative", padding: 6 }}>
+            <Ionicons
+              name="notifications-outline"
+              size={24}
+              color={theme.text}
+            />
 
-  {liveCalls.length > 0 && (
-    <View style={{position: "absolute",
-  top: 0,
-  right: 0,
-  backgroundColor: "#ff3b30",
-  minWidth: 16,
-  height: 16,
-  borderRadius: 8,
-  justifyContent: "center",
-  alignItems: "center",
-  paddingHorizontal: 3,}}>
-      <Text style={{ color: "#fff",
-  fontSize: 10,
-  fontWeight: "bold",}}>
-        {liveCalls.length > 9 ? "9+" : liveCalls.length}
-      </Text>
-    </View>
-  )}
-</View>
-
+            {liveCalls.length > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  backgroundColor: "#ff3b30",
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 3,
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 10, fontWeight: "bold" }}
+                >
+                  {liveCalls.length > 9 ? "9+" : liveCalls.length}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </Animated.View>
 
@@ -127,40 +131,39 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
           🔴 Happening Now
         </Text>
 
-      {loading ? (
-  <View
-    style={{
-      height: 120,
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <ActivityIndicator size="small" color={theme.primary} />
-  </View>
-) : (
-  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-    {liveCalls.map((item) => (
-      <Pressable
-        key={item.id}
-        style={[styles.liveCard, { backgroundColor: theme.card }]}
-        onPress={() => joinCall(item.id)}
-      >
-        <View style={styles.liveBadge}>
-          <Text style={styles.liveText}>LIVE</Text>
-        </View>
+        {loading ? (
+          <View
+            style={{
+              height: 120,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="small" color={theme.primary} />
+          </View>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {liveCalls.map((item) => (
+              <Pressable
+                key={item.id}
+                style={[styles.liveCard, { backgroundColor: theme.card }]}
+                onPress={() => joinCall(item.id)}
+              >
+                <View style={styles.liveBadge}>
+                  <Text style={styles.liveText}>LIVE</Text>
+                </View>
 
-        <Text style={[styles.roomTitle, { color: theme.text }]}>
-          {item.state?.custom?.title || "Youth and sports"}
-        </Text>
+                <Text style={[styles.roomTitle, { color: theme.text }]}>
+                  {item.state?.custom?.title || "Youth and sports"}
+                </Text>
 
-        <Text style={{ color: theme.subtext }}>
-          👥 {item.state?.participants?.length || 0}
-        </Text>
-      </Pressable>
-    ))}
-  </ScrollView>
-)}
-
+                <Text style={{ color: theme.subtext }}>
+                  👥 {item.state?.participants?.length || 0}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
 
         {/* DISCOVER */}
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
@@ -168,49 +171,48 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
         </Text>
 
         {loading ? (
-  <ActivityIndicator
-    style={{ marginTop: 20 }}
-    size="small"
-    color={theme.primary}
-  />
-) : (
-  <FlatList
-    data={calls}
-    keyExtractor={(item) => item.id}
-    scrollEnabled={false}
-    renderItem={({ item }) => {
-      const isLive = !item.state?.endedAt;
-
-      return (
-        <Pressable
-          style={[styles.listCard, { backgroundColor: theme.card }]}
-          onPress={isLive ? () => joinCall(item.id) : undefined}
-        >
-          <View>
-            <Text style={{ color: isLive ? "red" : "gray" }}>
-              {isLive ? "LIVE" : "ENDED"}
-            </Text>
-
-            <Text style={[styles.roomTitle, { color: theme.text }]}>
-              {item.state?.custom?.title || "National budget"}
-            </Text>
-
-            <Text style={{ color: theme.subtext }}>
-              by {item.state?.createdBy?.name || "Unknown"}
-            </Text>
-          </View>
-
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.text}
+          <ActivityIndicator
+            style={{ marginTop: 20 }}
+            size="small"
+            color={theme.primary}
           />
-        </Pressable>
-      );
-    }}
-  />
-)}
+        ) : (
+          <FlatList
+            data={calls}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            renderItem={({ item }) => {
+              const isLive = !item.state?.endedAt;
 
+              return (
+                <Pressable
+                  style={[styles.listCard, { backgroundColor: theme.card }]}
+                  onPress={isLive ? () => joinCall(item.id) : undefined}
+                >
+                  <View>
+                    <Text style={{ color: isLive ? "red" : "gray" }}>
+                      {isLive ? "LIVE" : "ENDED"}
+                    </Text>
+
+                    <Text style={[styles.roomTitle, { color: theme.text }]}>
+                      {item.state?.custom?.title || "National budget"}
+                    </Text>
+
+                    <Text style={{ color: theme.subtext }}>
+                      by {item.state?.createdBy?.name || "Unknown"}
+                    </Text>
+                  </View>
+
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={theme.text}
+                  />
+                </Pressable>
+              );
+            }}
+          />
+        )}
       </ScrollView>
 
       {/* FLOAT BUTTON */}
