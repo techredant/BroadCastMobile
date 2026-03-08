@@ -18,9 +18,9 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
-import { useTheme } from "../../../context/ThemeContext";
-import { useUserOnboarding } from "../../../context/UserOnBoardingContext";
-import { useLevel } from "../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useUserOnboarding } from "@/context/UserOnBoardingContext";
+import { useLevel } from "@/context/LevelContext";
 
 const accountOptions = [
   "Personal Account",

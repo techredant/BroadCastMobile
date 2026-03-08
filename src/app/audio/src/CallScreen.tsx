@@ -7,7 +7,7 @@ import {
   useStreamVideoClient,
 } from "@stream-io/video-react-native-sdk";
 import { useLocalSearchParams } from "expo-router";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 type Props = { goToHomeScreen: () => void };
 

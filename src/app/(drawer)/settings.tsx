@@ -13,7 +13,7 @@ import {
 import { Feather, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 
 type RowProps = {

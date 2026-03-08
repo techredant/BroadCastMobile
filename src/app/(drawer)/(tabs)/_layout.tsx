@@ -58,11 +58,11 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-expo";
-import { useTheme } from "../../../../context/ThemeContext";
-import { useLevel } from "../../../../context/LevelContext";
 import { LevelSocketProvider } from "@/contexts/LevelSocketContext";
 import { PostButton } from "@/modals/PostButton";
 import { Image } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 
 export default function TabsLayout() {
   const { theme } = useTheme();

@@ -13,7 +13,7 @@ import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
 import { router } from "expo-router";
 import iebc from "../../../assets/data/iebc.json";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function LocationSelection() {
   const { theme, isDark } = useTheme();

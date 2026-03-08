@@ -7,7 +7,7 @@ import {
   Switch,
   Pressable,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 const Notifications = () => {
   const { theme } = useTheme();
   const [mentions, setMentions] = useState(true);

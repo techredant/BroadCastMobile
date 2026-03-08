@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { COLORS } from "@/lib/theme";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,7 +11,6 @@ import {
   ScrollView,
   StatusBar,
 } from "react-native";
-import { useTheme } from "../../../../context/ThemeContext";
 
 const MENU_ITEMS = [
   {

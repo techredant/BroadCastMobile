@@ -34,8 +34,8 @@ import BottomSheet, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 import { LevelHeader } from "@/components/level/NewsHeader";
-import { useLevel } from "../../../../../context/LevelContext";
-import { useTheme } from "../../../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
 
 const BASE_URL = "https://cast-api-zeta.vercel.app";

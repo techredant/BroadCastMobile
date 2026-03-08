@@ -16,7 +16,7 @@ import { useRouter } from "expo-router"; // ✅ Expo Router
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useUser } from "@clerk/clerk-expo";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const SellFormScreen = () => {
   const router = useRouter(); // ✅

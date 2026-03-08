@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/clerk-expo";
 import { AvatarWithStatus } from "./AvatarsWithStatus";
-import { useLevel } from "../../../context/LevelContext";
+import { useLevel } from "@/context/LevelContext";
 
 export function CreateStatus() {
   const { user } = useUser();

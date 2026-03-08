@@ -10,7 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 /* =======================
    STATUS INPUT SCREEN

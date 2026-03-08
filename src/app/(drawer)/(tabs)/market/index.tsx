@@ -14,7 +14,7 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 type Product = {
   _id: string;
@@ -141,7 +141,7 @@ export default function MarketScreen() {
 
         {/* Sell Button */}
         <Pressable
-          onPress={() => router.push("/")}
+          onPress={() => router.push("/market/sell-form")}
           style={{
             marginLeft: 10,
             backgroundColor: theme.button,

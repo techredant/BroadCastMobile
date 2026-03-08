@@ -7,7 +7,7 @@ import {
   Linking,
   Pressable,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const Privacy = () => {
   const { theme } = useTheme(); // 👈 get current theme

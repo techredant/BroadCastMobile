@@ -166,7 +166,7 @@ interface LevelContextType {
 }
 
 const LevelContext = createContext<LevelContextType | undefined>(undefined);
-const BASE_URL = "https://cast-api-zeta.vercel.app";
+const BASE_URL = "https://backend-api.redanttech.com";
 
 export const LevelProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useUser();

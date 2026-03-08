@@ -20,8 +20,8 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
-import { useLevel } from "../../../context/LevelContext";
-import { useTheme } from "../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const BASE_URL = "https://backend-api.redanttech.com";
 const SCREEN_WIDTH = Dimensions.get("window").width;

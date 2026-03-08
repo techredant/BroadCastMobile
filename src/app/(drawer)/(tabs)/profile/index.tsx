@@ -18,9 +18,9 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
-import { useLevel } from "../../../../../context/LevelContext";
-import { useUserContext } from "../../../../../context/FollowContext";
-import { useTheme } from "../../../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useUserContext } from "@/context/FollowContext";
+import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
 
 const BASE_URL = "https://cast-api-zeta.vercel.app";

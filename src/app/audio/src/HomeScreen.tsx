@@ -17,8 +17,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { router } from "expo-router";
-import { useTheme } from "../../../../context/ThemeContext";
-import { useLevel } from "../../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 
 export const HomeScreen = () => {
   const client = useStreamVideoClient();

@@ -14,7 +14,7 @@ const AuthScreen = () => {
       {/* gradient background */}
       <View className="absolute inset-0">
         <LinearGradient
-       colors={["#0B0B0F", "#121218", "#1A1A22", "#121218", "#0B0B0F"]}
+          colors={["#0B0B0F", "#121218", "#1A1A22", "#121218", "#0B0B0F"]}
           locations={[0, 0.25, 0.5, 0.75, 1]}
           style={{ width: "100%", height: "100%" }}
           start={{ x: 0.5, y: 0 }}
@@ -26,13 +26,12 @@ const AuthScreen = () => {
         {/* TOP SECTION: logo + hero */}
         <View>
           <View className="items-center pt-10 pb-2">
-
             <Text className="text-3xl font-extrabold text-foreground tracking-tight mt-4 font-mono">
-              BroadCast 
+              Broadcast
             </Text>
 
             <Text className="text-foreground-muted text-[15px] mt-1.5 tracking-wide">
-              Learn together, grow together
+              The platform for open political conversation
             </Text>
           </View>
 
@@ -48,20 +47,20 @@ const AuthScreen = () => {
           <View className="flex-row flex-wrap justify-center gap-3 px-6 mt-5">
             {[
               {
-                icon: "videocam" as const,
-                label: "Video Calls",
+                icon: "megaphone" as const,
+                label: "Public Debates",
                 color: "#A29BFE",
                 bg: "bg-primary/12 border-primary/20",
               },
               {
                 icon: "chatbubbles" as const,
-                label: "Chats",
+                label: "Political Discussions",
                 color: "#FF6B6B",
                 bg: "bg-accent/12 border-accent/20",
               },
               {
                 icon: "people" as const,
-                label: "Find Partners",
+                label: "Join Communities",
                 color: "#00B894",
                 bg: "bg-accent-secondary/12 border-accent-secondary/20",
               },

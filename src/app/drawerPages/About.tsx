@@ -8,7 +8,7 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const AboutScreen = () => {
   const { theme } = useTheme();

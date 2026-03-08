@@ -1,6 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { CreateStatus } from "./CreateStatus";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { StatusItem } from "./StatusItem";
 
 interface Status {

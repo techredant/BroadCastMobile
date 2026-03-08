@@ -17,8 +17,8 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLevel } from "../../../../context/LevelContext";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
 
 

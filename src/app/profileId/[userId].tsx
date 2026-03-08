@@ -20,8 +20,8 @@ import {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { useUserContext } from "../../../context/FollowContext";
-import { useLevel } from "../../../context/LevelContext";
+import { useUserContext } from "@/context/FollowContext";
+import { useLevel } from "@/context/LevelContext";
 
 const BASE_URL = "https://backend-api.redanttech.com";
 const SCREEN_WIDTH = Dimensions.get("window").width;

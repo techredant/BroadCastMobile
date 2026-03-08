@@ -9,7 +9,7 @@ import Animated, {
   FadeOut,
 } from "react-native-reanimated";
 import { router } from "expo-router";
-import { useLevel } from "../../context/LevelContext";
+import { useLevel } from "@/context/LevelContext";
 
 type LevelType =
   | "home"

@@ -18,8 +18,8 @@ import SAMPLE_STATUSES from "@/assets/data/SampleStatuses.json";
 import { Post } from "@/types/post";
 import { PostCard } from "@/components/posts/PostCard";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
-import { useLevel } from "../../../../context/LevelContext";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
 
 

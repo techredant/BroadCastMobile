@@ -7,7 +7,7 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import AudioRoomDescription from "./AudioRoomDescription";
 import AudioRoomParticipants from "./AudioRoomParticipants";
 import AudioRoomControlsPanel from "./AudioRoomControlsPanel";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 type Props = { goToHomeScreen: () => void };
 

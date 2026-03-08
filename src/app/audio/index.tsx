@@ -8,8 +8,8 @@ import {
 import { CallScreen } from "./src/CallScreen";
 import { HomeScreen } from "./src/HomeScreen";
 import { tokenProvider } from "@/utils/tokenProvider";
-import { useTheme } from "../../../context/ThemeContext";
-import { useLevel } from "../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 
 const apiKey = process.env.EXPO_PUBLIC_STREAM_API_KEY!;
 // Replace this with a real call ID or dynamically generate it

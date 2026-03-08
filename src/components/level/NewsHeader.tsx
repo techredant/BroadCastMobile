@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
-import { useTheme } from "../../../context/ThemeContext";
-import { useLevel } from "../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 
 export function LevelHeader() {
   const { theme } = useTheme();

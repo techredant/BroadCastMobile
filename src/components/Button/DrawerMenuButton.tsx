@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { useNavigation } from "expo-router";
 import { DrawerActions } from "@react-navigation/native";
 

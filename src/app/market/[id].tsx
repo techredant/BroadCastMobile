@@ -15,7 +15,7 @@ import { useLocalSearchParams, router, Link } from "expo-router";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useChatContext } from "stream-chat-expo";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const { width } = Dimensions.get("window");
 

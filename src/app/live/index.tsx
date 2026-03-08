@@ -7,8 +7,8 @@ import {
 } from "@stream-io/video-react-native-sdk";
 import LiveScreen from "./src/LiveScreen";
 import { HomeScreen } from "./src/HomeLivescreen";
-import { useLevel } from "../../../context/LevelContext";
-import { useTheme } from "../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 import { tokenProvider } from "@/utils/tokenProvider";
 
 const apiKey = process.env.EXPO_PUBLIC_STREAM_API_KEY!;

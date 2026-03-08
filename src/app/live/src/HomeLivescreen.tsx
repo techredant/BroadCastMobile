@@ -16,8 +16,8 @@ import { Call, StreamVideoClient } from "@stream-io/video-react-native-sdk";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { router } from "expo-router";
-import { useTheme } from "../../../../context/ThemeContext";
-import { useLevel } from "../../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 
 const { width } = Dimensions.get("window");

@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { View, Text, FlatList, Pressable, StyleSheet } from "react-native";
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
-import { useLevel } from "../../../context/LevelContext";
-import { useTheme } from "../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 
 type Trend = {
   id: string;

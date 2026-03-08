@@ -5,29 +5,21 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { useUser } from "@clerk/clerk-expo";
 import { router, usePathname } from "expo-router";
-import { useLevel } from "../../../context/LevelContext";
-import { useTheme } from "../../../context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
 
 /* =======================
    CUSTOM DRAWER CONTENT
 ======================= */
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { user } = useUser();
-  const { userDetails, isLoadingUser, setCurrentLevel, } = useLevel();
+  const { userDetails, isLoadingUser, setCurrentLevel } = useLevel();
   const { theme } = useTheme();
-
-  
 
   return (
     <DrawerContentScrollView
@@ -49,7 +41,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           borderBottomColor: theme.border,
           flexDirection: "row",
           alignItems: "center",
-           
         }}
       >
         <Image
@@ -95,33 +86,29 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             </>
           )}
         </View>
-           <Ionicons
-          name="chevron-forward"
-          size={18}
-          color={theme.subtext}
-        />
-
-</Pressable>  
-   <Pressable
-  onPress={() => {
-    // Set the current level to "home"
-    setCurrentLevel({type: "home", value: "home"}); 
-  }}
-  style={{
-    paddingTop: 20,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  }}
->
-  <Ionicons name="home-outline" size={26} color={theme.subtext} />
-  <Text style={{ color: theme.text, fontWeight: "bold" }}>Go National</Text>
-</Pressable>
-
+        <Ionicons name="chevron-forward" size={18} color={theme.subtext} />
+      </Pressable>
+      <Pressable
+        onPress={() => {
+          // Set the current level to "home"
+          setCurrentLevel({ type: "home", value: "home" });
+        }}
+        style={{
+          paddingTop: 20,
+          paddingBottom: 16,
+          paddingHorizontal: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.border,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 5,
+        }}
+      >
+        <Ionicons name="home-outline" size={26} color={theme.subtext} />
+        <Text style={{ color: theme.text, fontWeight: "bold" }}>
+          Go National
+        </Text>
+      </Pressable>
 
       {/* DRAWER ITEMS */}
       <View style={{ paddingTop: 8 }}>
@@ -134,7 +121,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 /* =======================
    MENU BUTTON (STATIC)
 ======================= */
-
 
 /* =======================
    DRAWER LAYOUT
@@ -189,26 +175,6 @@ export default function DrawerLayout() {
           ),
         }}
       />
-
-      <Drawer.Screen
-        name="live"
-        options={{
-          drawerLabel: "Live",
-          drawerIcon: ({ color, size }) => (
-            <Feather name="video" size={size} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="audio"
-        options={{
-          drawerLabel: "Audio Rooms",
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="mic-circle" size={size} color={color} />
-          ),
-        }}
-      />
-
       <Drawer.Screen
         name="trends"
         options={{

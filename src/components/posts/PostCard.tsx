@@ -53,8 +53,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Video from "react-native-video";
 import { ReciteModal } from "./ReciteModal";
 import CommentModal from "./CommentModal";
-import { useTheme } from "../../../context/ThemeContext";
-import { useLevel } from "../../../context/LevelContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLevel } from "@/context/LevelContext";
 
 const { width } = Dimensions.get("window");
 

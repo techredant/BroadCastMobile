@@ -1,4 +1,5 @@
 import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
+import { useTheme } from "@/context/ThemeContext";
 import { useAppContext } from "@/contexts/AppProvider";
 import { COLORS } from "@/lib/theme";
 import { getGreetingForHour } from "@/lib/utils";
@@ -10,7 +11,6 @@ import { StatusBar, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Channel } from "stream-chat";
 import { ChannelList } from "stream-chat-expo";
-import { useTheme } from "../../../../context/ThemeContext";
 
 const ChatsScreen = () => {
   const router = useRouter();

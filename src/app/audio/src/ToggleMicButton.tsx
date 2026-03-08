@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export const ToggleMicButton = () => {
   const call = useCall();
