@@ -23,7 +23,7 @@ import { useUserContext } from "@/context/FollowContext";
 import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
 
-const BASE_URL = "https://cast-api-zeta.vercel.app";
+const BASE_URL = "https://backend-api.redanttech.com";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2; // optional spacing between items
@@ -70,7 +70,7 @@ export default function ProfileScreen() {
     if (!userDetails?.clerkId) return;
 
     try {
-      const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
+      const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel?.type}&levelValue=${currentLevel?.value}`;
 
       const res = await axios.get(url);
       setPosts(res.data ?? []);

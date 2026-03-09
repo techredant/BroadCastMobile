@@ -204,3 +204,124 @@ function RootInnerLayout() {
     </GestureHandlerRootView>
   );
 }
+
+// app/_layout.tsx
+
+// import { ClerkProvider, useAuth, useUser } from "@clerk/clerk-expo";
+// import { tokenCache } from "@clerk/clerk-expo/token-cache";
+// import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
+// import { useEffect } from "react";
+// import { ActivityIndicator, View } from "react-native";
+
+// import { GestureHandlerRootView } from "react-native-gesture-handler";
+// import { MenuProvider } from "react-native-popup-menu";
+
+// import ChatWrapper from "@/components/ChatWrapper";
+// import VideoProvider from "@/components/VideoProvider";
+// import { AppProvider } from "@/contexts/AppProvider";
+
+// import { ThemeProvider } from "@/context/ThemeContext";
+// import { LevelProvider } from "@/context/LevelContext";
+// import { UserOnboardingProvider } from "@/context/UserOnBoardingContext";
+// import { UserProvider } from "@/context/FollowContext";
+
+// import "../../global.css";
+
+// SplashScreen.preventAutoHideAsync();
+
+// export default function RootLayout() {
+//   return (
+//     <ClerkProvider
+//       publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+//       tokenCache={tokenCache}
+//     >
+//       <RootNavigation />
+//     </ClerkProvider>
+//   );
+// }
+
+// function RootNavigation() {
+//   const { isLoaded, isSignedIn } = useAuth();
+//   const { user } = useUser();
+//   const router = useRouter();
+//   const segments = useSegments();
+
+//   useEffect(() => {
+//     if (!isLoaded) return;
+
+//     const inAuth = segments[0] === "(auth)";
+//     const inOnboarding = segments[0] === "(onboarding)";
+//     const inDrawer = segments[0] === "(drawer)";
+
+//     const hasCompletedName = !!user?.unsafeMetadata?.hasCompletedName;
+//     const onboardingComplete = !!user?.unsafeMetadata?.onboardingComplete;
+
+//     if (!isSignedIn && !inAuth) {
+//       router.replace("/(auth)");
+//     }
+
+//     else if (isSignedIn && !hasCompletedName && !inOnboarding) {
+//       router.replace("/(onboarding)/nameScreen");
+//     }
+
+//     else if (
+//       isSignedIn &&
+//       hasCompletedName &&
+//       !onboardingComplete &&
+//       !inOnboarding
+//     ) {
+//       router.replace("/(onboarding)/location");
+//     }
+
+//     else if (
+//       isSignedIn &&
+//       onboardingComplete &&
+//       !inDrawer
+//     ) {
+//       router.replace("/(drawer)/(tabs)");
+//     }
+
+//     SplashScreen.hideAsync();
+
+//   }, [isLoaded, isSignedIn, segments]);
+
+//   if (!isLoaded) {
+//     return (
+//       <View style={{ flex:1, justifyContent:"center", alignItems:"center" }}>
+//         <ActivityIndicator size="large" />
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <GestureHandlerRootView style={{ flex: 1 }}>
+//       <ThemeProvider>
+//         <LevelProvider>
+//           <UserOnboardingProvider>
+
+//             {isSignedIn ? (
+//               <UserProvider currentUserId={user!.id}>
+//                 <MenuProvider>
+
+//                   <ChatWrapper user={user!}>
+//                     <VideoProvider>
+
+//                       <AppProvider>
+//                         <Stack screenOptions={{ headerShown: false }} />
+//                       </AppProvider>
+
+//                     </VideoProvider>
+//                   </ChatWrapper>
+
+//                 </MenuProvider>
+//               </UserProvider>
+//             ) : (
+//               <Stack screenOptions={{ headerShown: false }} />
+//             )}
+
+//           </UserOnboardingProvider>
+//         </LevelProvider>
+//       </ThemeProvider>
+//     </GestureHandlerRootView>
+//   );
+// }

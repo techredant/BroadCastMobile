@@ -51,7 +51,7 @@ export function FloatingLevelButton() {
       return;
     }
     if (type === "chat") {
-      router.replace("/(stream)");
+      router.replace("/(drawer)/(stream)");
       return;
     }
 

@@ -141,7 +141,7 @@ export default function MarketScreen() {
 
         {/* Sell Button */}
         <Pressable
-          onPress={() => router.push("/market/sell-form")}
+          onPress={() => router.push("/(market)/sell-form")}
           style={{
             marginLeft: 10,
             backgroundColor: theme.button,

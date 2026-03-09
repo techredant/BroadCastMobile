@@ -1,44 +1,23 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  TextInput,
-  StatusBar,
-  RefreshControl,
-  FlatList,
-} from "react-native";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+
+import { View, Text, StatusBar, RefreshControl, FlatList } from "react-native";
+
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
+
 import { PostCard } from "@/components/posts/PostCard";
-import { Status } from "@/app/status/Status";
-import { useFocusEffect } from "expo-router";
-import {
-  DrawerActions,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-import { LoaderKitView } from "react-native-loader-kit";
-import SAMPLE_STATUSES from "@/assets/data/SampleStatuses.json";
-import BottomSheet, {
-  BottomSheetFlatList,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 import { LevelHeader } from "@/components/level/NewsHeader";
+
+import { useIsFocused } from "@react-navigation/native";
+
+import { LoaderKitView } from "react-native-loader-kit";
+
 import { useLevel } from "@/context/LevelContext";
 import { useTheme } from "@/context/ThemeContext";
+
 import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
 
-const BASE_URL = "https://cast-api-zeta.vercel.app";
+const BASE_URL = "https://backend-api.redanttech.com";
 
 interface Post {
   _id: string;
@@ -56,30 +35,39 @@ interface Post {
 }
 
 export default function NewsScreen() {
-  const { currentLevel, userDetails, isLoadingUser } = useLevel();
+  const { currentLevel, isLoadingUser } = useLevel();
   const { theme, isDark } = useTheme();
-  const navigation = useNavigation();
+
   const isFocused = useIsFocused();
-  const [news, setNews] = useState<Post[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
 
-  // ---------------- FlatList viewability ----------------
+  const [news, setNews] = useState<Post[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+
+  /* ---------------- Viewability ---------------- */
+
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       setVisiblePostId(viewableItems[0].item._id);
     }
   }).current;
-  const viewabilityConfig = { itemVisiblePercentThreshold: 80 };
 
-  // ---------------- Fetch posts ----------------
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 80,
+  };
+
+  /* ---------------- Fetch News ---------------- */
+
   const fetchNews = useCallback(async () => {
-    try {
-      setLoading(true);
+    if (!currentLevel?.type || !currentLevel?.value) return;
 
+    setLoading(true);
+
+    try {
       const res = await axios.get(`${BASE_URL}/api/posts`, {
         params: {
           levelType: currentLevel.type,
@@ -87,7 +75,6 @@ export default function NewsScreen() {
         },
       });
 
-      // Only non-personal accounts = news/org accounts
       const filteredNews = res.data.filter(
         (item: Post) => item.accountType !== "Personal Account",
       );
@@ -97,34 +84,50 @@ export default function NewsScreen() {
       console.error("Error fetching news:", err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
-  }, [currentLevel]);
+  }, [currentLevel?.type, currentLevel?.value]);
+
+  /* ---------------- Initial Load ---------------- */
 
   useEffect(() => {
     fetchNews();
   }, [fetchNews]);
+
+  /* ---------------- Pull To Refresh ---------------- */
 
   const onRefresh = () => {
     setRefreshing(true);
     fetchNews();
   };
 
-  // ---------------- Socket setup ----------------
+  /* ---------------- Socket Setup ---------------- */
+
   useEffect(() => {
     if (!currentLevel?.type || !currentLevel?.value) return;
-    const socket = io(BASE_URL, { transports: ["websocket"] });
+
+    socketRef.current?.disconnect();
+
+    const socket = io(BASE_URL, {
+      transports: ["websocket"],
+    });
+
     socketRef.current = socket;
 
     const room = `level-${currentLevel.type}-${currentLevel.value}`;
+
     socket.emit("joinRoom", room);
 
-    socket.on("newPost", (post) => {
-      setNews((prev) =>
-        prev.some((p) => p._id === post._id) ? prev : [post, ...prev],
-      );
+    socket.on("newPost", (post: Post) => {
+      if (post.accountType !== "Personal Account") return;
+
+      setNews((prev) => {
+        if (prev.find((p) => p._id === post._id)) return prev;
+        return [post, ...prev];
+      });
     });
 
-    socket.on("deletePost", (deletedPostId) => {
+    socket.on("deletePost", (deletedPostId: string) => {
       setNews((prev) => prev.filter((p) => p._id !== deletedPostId));
     });
 
@@ -134,32 +137,28 @@ export default function NewsScreen() {
     };
   }, [currentLevel]);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: theme.background,
-        }}
-      >
-        <LoaderKitView
-          style={{ width: 60, height: 60 }}
-          name="BallScaleRippleMultiple"
-          animationSpeedMultiplier={1.0}
-          color={theme.text}
-        />
-        <Text style={{ marginTop: 16, color: theme.text }}>
-          Loading {currentLevel?.value} posts...
-        </Text>
-      </View>
-    );
-  }
+  /* ---------------- Render Post ---------------- */
 
-  // ---------------- Render ----------------
+  const renderPost = useCallback(
+    ({ item }: { item: Post }) => {
+      return (
+        <PostCard
+          post={item}
+          isVisible={visiblePostId === item._id && isFocused}
+          socket={socketRef.current}
+          allPosts={news}
+          onDeletePost={(postId: string) =>
+            setNews((prev) => prev.filter((p) => p._id !== postId))
+          }
+        />
+      );
+    },
+    [visiblePostId, isFocused, news],
+  );
+
+  /* ---------------- Render ---------------- */
+
   return (
-    // <BottomSheetModalProvider>
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar
         translucent
@@ -167,26 +166,17 @@ export default function NewsScreen() {
         barStyle={isDark ? "light-content" : "dark-content"}
       />
 
-      {/* Drawer Button */}
-      {/* <DrawerMenuButton /> */}
-      {/* Posts List */}
       <FlatList
         data={news}
+        keyExtractor={(item) => item._id}
+        renderItem={renderPost}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        removeClippedSubviews
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
-        keyExtractor={(item) => item._id.toString()}
         scrollEventThrottle={16}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            isVisible={visiblePostId === item._id && isFocused}
-            socket={socketRef.current}
-            allPosts={news}
-            onDeletePost={(postId: any) =>
-              setNews((prev) => prev.filter((p) => p._id !== postId))
-            }
-          />
-        )}
         ListHeaderComponent={<LevelHeader />}
         contentContainerStyle={{ paddingBottom: 120 }}
         refreshControl={
@@ -198,22 +188,18 @@ export default function NewsScreen() {
           />
         }
         ListEmptyComponent={
-          <View
-            style={{
-              alignItems: "center",
-              // marginTop: 60,
-            }}
-          >
+          <View style={{ alignItems: "center", marginTop: 60 }}>
             {loading || isLoadingUser ? (
               <>
                 <LoaderKitView
                   style={{ width: 50, height: 50 }}
                   name="BallScaleRippleMultiple"
-                  animationSpeedMultiplier={1.0}
+                  animationSpeedMultiplier={1}
                   color={theme.text}
                 />
+
                 <Text style={{ marginTop: 16, color: theme.text }}>
-                  Loading {currentLevel.value} news...
+                  Loading {currentLevel?.value} news...
                 </Text>
               </>
             ) : (
@@ -225,9 +211,7 @@ export default function NewsScreen() {
         }
       />
 
-      {/* Floating Action Button */}
       <FloatingLevelButton />
     </View>
-    // </BottomSheetModalProvider>
   );
 }

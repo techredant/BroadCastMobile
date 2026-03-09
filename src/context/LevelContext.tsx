@@ -1,298 +1,185 @@
-// import React, {
-//   createContext,
-//   useContext,
-//   useEffect,
-//   useRef,
-//   useState,
-// } from "react";
-// import axios from "axios";
-// import { useAuth, useUser } from "@clerk/clerk-expo";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 
-// interface LevelContextType {
-//   currentLevel: { type: string; value: string };
-//   setCurrentLevel: (level: { type: string; value: string }) => void;
-
-//   county?: string;
-//   setCounty: (county?: string) => void;
-
-//   constituency?: string;
-//   setConstituency: (constituency?: string) => void;
-
-//   ward?: string;
-//   setWard: (ward?: string) => void;
-
-//   userDetails?: any;
-//   refreshUserDetails: (force?: boolean) => Promise<void>;
-//   isLoadingUser: boolean;
-// }
-
-// const LevelContext = createContext<LevelContextType | undefined>(undefined);
-
-// export const LevelProvider: React.FC<{ children: React.ReactNode }> = ({
-//   children,
-// }) => {
-//   const { user } = useUser();
-//   const { getToken } = useAuth();
-
-//   /* ---------------- STATE ---------------- */
-//   const [currentLevel, setCurrentLevel] = useState({
-//     type: "home",
-//     value: "home",
-//   });
-
-//   const [county, setCounty] = useState<string>();
-//   const [constituency, setConstituency] = useState<string>();
-//   const [ward, setWard] = useState<string>();
-
-//   const [userDetails, setUserDetails] = useState<any>(null);
-//   const [isLoadingUser, setIsLoadingUser] = useState(false);
-
-//   /* ---------------- INTERNAL GUARDS ---------------- */
-//   const hasFetchedRef = useRef(false);
-
-//    /* ---------------- FETCH USER ---------------- */
-//   const refreshUserDetails = async (force = false) => {
-//     if (!user) return;
-
-//     // Prevent duplicate calls
-//     if (!force && hasFetchedRef.current) return;
-
-//     hasFetchedRef.current = true;
-//     setIsLoadingUser(true);
-
-//     try {
-//       const token = await getToken();
-
-//       const res = await axios.get(
-//         `https://cast-api-zeta.vercel.app/api/users/${user.id}`,
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       const data = res.data;
-
-//       setUserDetails(data);
-//       setCounty(data?.county);
-//       setConstituency(data?.constituency);
-//       setWard(data?.ward);
-//     } catch (err: any) {
-//       if (axios.isAxiosError(err) && err.response?.status === 404) {
-//         // User not yet created in backend
-//         setUserDetails(null);
-//         setCounty(undefined);
-//         setConstituency(undefined);
-//         setWard(undefined);
-//       } else {
-//         console.error("❌ Error fetching user details:", err);
-//       }
-//     } finally {
-//       setIsLoadingUser(false);
-//     }
-//   };
-
-//   /* ---------------- AUTO FETCH (ONCE) ---------------- */
-//   useEffect(() => {
-//     if (!user) {
-//       hasFetchedRef.current = false;
-//       setUserDetails(null);
-//       return;
-//     }
-
-//     refreshUserDetails();
-//   }, [user]);
-
-//   /* ---------------- PROVIDER ---------------- */
-//   return (
-//     <LevelContext.Provider
-//       value={{
-//         currentLevel,
-//         setCurrentLevel,
-
-//         county,
-//         setCounty,
-
-//         constituency,
-//         setConstituency,
-
-//         ward,
-//         setWard,
-
-//         userDetails,
-//         refreshUserDetails,
-//         isLoadingUser,
-//       }}
-//     >
-//       {children}
-//     </LevelContext.Provider>
-//   );
-// };
-
-// /* ---------------- HOOK ---------------- */
-// export const useLevel = () => {
-//   const context = useContext(LevelContext);
-//   if (!context) {
-//     throw new Error("useLevel must be used within a LevelProvider");
-//   }
-//   return context;
-// };
-
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import io, { Socket } from "socket.io-client";
+
 import { Post } from "@/types/post";
 
+const BASE_URL = "https://backend-api.redanttech.com";
+
+interface Level {
+  type: string;
+  value: string;
+}
+
 interface LevelContextType {
-  currentLevel: { type: string; value: string };
-  setCurrentLevel: (level: { type: string; value: string }) => void;
-
-  county?: string;
-  setCounty: (county?: string) => void;
-
-  constituency?: string;
-  setConstituency: (constituency?: string) => void;
-
-  ward?: string;
-  setWard: (ward?: string) => void;
-
-  userDetails?: any;
-  refreshUserDetails: (force?: boolean) => Promise<void>;
-  isLoadingUser: boolean;
+  currentLevel: Level | null;
+  setCurrentLevel: (level: Level) => void;
 
   posts: Post[];
   loadingPosts: boolean;
+
+  userDetails: any;
+  isLoadingUser: boolean;
+
+  refreshUserDetails: () => Promise<void>;
+
   socket: Socket | null;
 }
 
 const LevelContext = createContext<LevelContextType | undefined>(undefined);
-const BASE_URL = "https://backend-api.redanttech.com";
 
-export const LevelProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LevelProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUser();
   const { getToken } = useAuth();
 
-  const [currentLevel, setCurrentLevel] = useState({ type: "home", value: "home" });
-  const [county, setCounty] = useState<string>();
-  const [constituency, setConstituency] = useState<string>();
-  const [ward, setWard] = useState<string>();
-  const [userDetails, setUserDetails] = useState<any>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
-  const hasFetchedRef = useRef(false);
+
+  const [userDetails, setUserDetails] = useState<any>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(false);
 
   /* ---------------- FETCH USER ---------------- */
-  const refreshUserDetails = async (force = false) => {
-    if (!user) return;
-    if (!force && hasFetchedRef.current) return;
 
-    hasFetchedRef.current = true;
+  const refreshUserDetails = useCallback(async () => {
+    if (!user) return;
+
     setIsLoadingUser(true);
 
     try {
       const token = await getToken();
+
       const res = await axios.get(`${BASE_URL}/api/users/${user.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       const data = res.data;
+
       setUserDetails(data);
-      setCounty(data?.county);
-      setConstituency(data?.constituency);
-      setWard(data?.ward);
-    } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        setUserDetails(null);
-        setCounty(undefined);
-        setConstituency(undefined);
-        setWard(undefined);
+
+      // Automatically set user level
+      if (data?.ward) {
+        setCurrentLevel({ type: "ward", value: data.ward });
+      } else if (data?.constituency) {
+        setCurrentLevel({ type: "constituency", value: data.constituency });
+      } else if (data?.county) {
+        setCurrentLevel({ type: "county", value: data.county });
       } else {
-        console.error("❌ Error fetching user details:", err);
+        setCurrentLevel({ type: "home", value: "home" });
       }
+    } catch (err) {
+      console.error("❌ Error fetching user details", err);
     } finally {
       setIsLoadingUser(false);
     }
-  };
+  }, [user]);
 
   /* ---------------- FETCH POSTS ---------------- */
-  const fetchPosts = async (level = currentLevel) => {
-    if (!level?.type || !level?.value) return;
+
+  const fetchPosts = useCallback(async () => {
+    if (!currentLevel) return;
+
     setLoadingPosts(true);
 
     try {
       const res = await axios.get<Post[]>(
-        `${BASE_URL}/api/posts?levelType=${level.type}&levelValue=${level.value}`
+        `${BASE_URL}/api/posts?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`,
       );
+
       setPosts(res.data ?? []);
     } catch (err) {
-      console.error("❌ Error fetching posts:", err);
+      console.error("❌ Error fetching posts", err);
     } finally {
       setLoadingPosts(false);
     }
-  };
+  }, [currentLevel]);
 
-  /* ---------------- SET LEVEL ---------------- */
-  const setLevelAndFetch = (level: { type: string; value: string }) => {
-    setCurrentLevel(level);
-    fetchPosts(level);
-  };
+  /* ---------------- LOAD USER ---------------- */
 
-  /* ---------------- SOCKET ---------------- */
   useEffect(() => {
-    if (!currentLevel?.type || !currentLevel?.value) return;
+    if (!user) {
+      setUserDetails(null);
+      setCurrentLevel(null);
+      return;
+    }
 
-    // Disconnect previous socket
+    refreshUserDetails();
+  }, [user]);
+
+  /* ---------------- LOAD POSTS WHEN LEVEL CHANGES ---------------- */
+
+  useEffect(() => {
+    if (!currentLevel) return;
+
+    fetchPosts();
+  }, [currentLevel]);
+
+  /* ---------------- SOCKET CONNECTION ---------------- */
+
+  useEffect(() => {
+    if (!currentLevel) return;
+
     socketRef.current?.disconnect();
 
-    const socket = io(BASE_URL, { transports: ["websocket"] });
-    socketRef.current = socket;
-
-    const room = `level-${currentLevel.type}-${currentLevel.value}`;
-    socket.emit("joinRoom", room);
-
-    socket.on("newPost", (post: Post) => {
-      setPosts((prev) => (prev.some((p) => p._id === post._id) ? prev : [post, ...prev]));
+    const newSocket = io(BASE_URL, {
+      transports: ["websocket"],
     });
 
-    socket.on("deletePost", (deletedPostId: string) => {
-      setPosts((prev) => prev.filter((p) => p._id !== deletedPostId));
+    socketRef.current = newSocket;
+    setSocket(newSocket);
+
+    const room = `level-${currentLevel.type}-${currentLevel.value}`;
+
+    newSocket.emit("joinRoom", room);
+
+    newSocket.on("newPost", (post: Post) => {
+      setPosts((prev) => {
+        if (prev.find((p) => p._id === post._id)) return prev;
+        return [post, ...prev];
+      });
+    });
+
+    newSocket.on("deletePost", (postId: string) => {
+      setPosts((prev) => prev.filter((p) => p._id !== postId));
     });
 
     return () => {
-      socket.emit("leaveRoom", room);
-      socket.disconnect();
+      newSocket.emit("leaveRoom", room);
+      newSocket.disconnect();
     };
   }, [currentLevel]);
-
-  /* ---------------- AUTO FETCH USER ---------------- */
-  useEffect(() => {
-    if (!user) {
-      hasFetchedRef.current = false;
-      setUserDetails(null);
-      return;
-    }
-    refreshUserDetails();
-  }, [user]);
 
   return (
     <LevelContext.Provider
       value={{
         currentLevel,
-        setCurrentLevel: setLevelAndFetch,
-        county,
-        setCounty,
-        constituency,
-        setConstituency,
-        ward,
-        setWard,
-        userDetails,
-        refreshUserDetails,
-        isLoadingUser,
+        setCurrentLevel,
+
         posts,
         loadingPosts,
-        socket: socketRef.current,
+
+        userDetails,
+        isLoadingUser,
+
+        refreshUserDetails,
+
+        socket,
       }}
     >
       {children}
@@ -302,6 +189,10 @@ export const LevelProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useLevel = () => {
   const context = useContext(LevelContext);
-  if (!context) throw new Error("useLevel must be used within a LevelProvider");
+
+  if (!context) {
+    throw new Error("useLevel must be used inside LevelProvider");
+  }
+
   return context;
 };

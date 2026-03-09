@@ -28,40 +28,25 @@ export const AudioRoomUI = ({ goToHomeScreen }: Props) => {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: theme.background },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <AudioRoomDescription />
       <AudioRoomParticipants />
       <PermissionRequestsPanel />
       <AudioRoomControlsPanel />
 
-      
-            <Animated.View entering={FadeInDown.delay(700)}>
-              <Pressable
-                style={[
-                  styles.joinButton,
-                  { backgroundColor: theme.primary },
-                ]}
-                onPress={leaveCall}
-              >
-                 <Ionicons name="exit-outline" size={22}  color={theme.background} />
-                <Text
-                  style={[
-                    styles.joinText,
-                    { color: theme.background },
-                  ]}
-                >
-                  {" "}
-                  Leave Quietly
-                </Text>
-              </Pressable>
-            </Animated.View>
-          </View>
-
+      <Animated.View entering={FadeInDown.delay(700)}>
+        <Pressable
+          style={[styles.joinButton, { backgroundColor: theme.primary }]}
+          onPress={leaveCall}
+        >
+          <Ionicons name="exit-outline" size={22} color={theme.background} />
+          <Text style={[styles.joinText, { color: theme.background }]}>
+            {" "}
+            Leave Quietly
+          </Text>
+        </Pressable>
+      </Animated.View>
+    </View>
   );
 };
 
