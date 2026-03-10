@@ -9,10 +9,12 @@ import {
   Pressable,
 } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
+import Constants from "expo-constants";
 
 const AboutScreen = () => {
   const { theme } = useTheme();
-  const appVersion = "1.0.0"; // you can fetch dynamically
+  
+  const appVersion = Constants.expoConfig?.version;
 
   return (
     <ScrollView
@@ -21,7 +23,7 @@ const AboutScreen = () => {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Image source={require("../../../assets/images/icon.png")} style={styles.logo} />
+        <Image source={require("../../../assets/images/icon.jpg")} style={styles.logo} />
         <Text style={[styles.title, { color: theme.text }]}>BroadCast</Text>
         <Text style={[styles.subtitle, { color: theme.subtext }]}>
           Your Voice. Your Platform.
