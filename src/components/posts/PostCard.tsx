@@ -175,7 +175,7 @@ export function PostCard({
     if (!postCard._id) return;
     try {
       setLoading(true);
-      const url = `https://backend-api.redanttech.com/api/${postCard._id}`;
+      const url = `https://cast-api-zeta.vercel.app/api/${postCard._id}`;
       // console.log("Fetching Comments from:", url);
 
       const res = await axios.get(url);
@@ -224,7 +224,7 @@ export function PostCard({
   const incrementViews = async () => {
     try {
       await axios.post(
-        `https://backend-api.redanttech.com/api/posts/${postCard._id}/view`,
+        `https://cast-api-zeta.vercel.app/api/posts/${postCard._id}/view`,
       );
       setPostCard((prev: any) => ({ ...prev, views: prev.views + 1 }));
     } catch (err) {
@@ -235,7 +235,7 @@ export function PostCard({
   const incrementRecasts = async () => {
     try {
       await axios.post(
-        `https://backend-api.redanttech.com/api/posts/${postCard._id}/recastCount`,
+        `https://cast-api-zeta.vercel.app/api/posts/${postCard._id}/recastCount`,
       );
       setPostCard((prev: any) => ({
         ...prev,
@@ -249,7 +249,7 @@ export function PostCard({
   const incrementRecite = async () => {
     try {
       await axios.post(
-        `https://backend-api.redanttech.com/api/posts/${postCard._id}/reciteCount`,
+        `https://cast-api-zeta.vercel.app/api/posts/${postCard._id}/reciteCount`,
       );
       setPostCard((prev: any) => ({
         ...prev,
@@ -279,7 +279,7 @@ export function PostCard({
 
     try {
       await axios.post(
-        `https://backend-api.redanttech.com/api/posts/${postCard._id}/like`,
+        `https://cast-api-zeta.vercel.app/api/posts/${postCard._id}/like`,
         { userId: userDetails.clerkId },
       );
       console.log("liked");
@@ -312,7 +312,7 @@ export function PostCard({
     setRecited(true);
 
     try {
-      await axios.post(`https://backend-api.redanttech.com/api/posts`, {
+      await axios.post(`https://cast-api-zeta.vercel.app/api/posts`, {
         ...newRecite,
         type: "recite",
       });
@@ -354,7 +354,7 @@ export function PostCard({
 
     try {
       const res = await axios.post(
-        `https://backend-api.redanttech.com/api/posts`, // same backend route
+        `https://cast-api-zeta.vercel.app/api/posts`, // same backend route
         newRecast,
       );
 
@@ -375,7 +375,7 @@ export function PostCard({
     setLoadingDelete(true);
     try {
       await axios.delete(
-        `https://backend-api.redanttech.com/api/posts/${postCard._id}`,
+        `https://cast-api-zeta.vercel.app/api/posts/${postCard._id}`,
         {
           data: { userId: userDetails.clerkId },
         },

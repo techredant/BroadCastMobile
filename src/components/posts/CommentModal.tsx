@@ -67,7 +67,7 @@ export default function CommentModal({
 
     try {
       const res = await fetch(
-        `https://backend-api.redanttech.com/api/${postId}/comments`,
+        `https://cast-api-zeta.vercel.app/api/${postId}/comments`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -100,7 +100,7 @@ export default function CommentModal({
 
     try {
       await axios.delete(
-        `https://backend-api.redanttech.com/api/${commentId}`,
+        `https://cast-api-zeta.vercel.app/api/${commentId}`,
         {
           data: { userId }, // send userId for backend validation
         },
@@ -141,7 +141,7 @@ export default function CommentModal({
 
     try {
       await axios.post(
-        `https://backend-api.redanttech.com/api/${commentId}/like`,
+        `https://cast-api-zeta.vercel.app/api/${commentId}/like`,
         { userId },
       );
       console.log("liked");

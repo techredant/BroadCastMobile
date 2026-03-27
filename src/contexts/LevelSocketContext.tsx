@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import io, { Socket } from "socket.io-client";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 
 const SocketContext = createContext<Socket | null>(null);
 

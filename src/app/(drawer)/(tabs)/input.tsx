@@ -20,6 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLevel } from "@/context/LevelContext";
 import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 export default function InputScreen() {
   const [cast, setCast] = useState("");
@@ -240,9 +241,6 @@ export default function InputScreen() {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
   }
 
-  /* =======================
-       UI
-    ======================= */
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
@@ -259,7 +257,6 @@ export default function InputScreen() {
                     <Ionicons name="close" size={28} color={theme.subtext} />
                 </TouchableOpacity> */}
         <View></View>
-
         <Text
           style={[
             styles.headerTitle,

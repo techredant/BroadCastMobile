@@ -58,7 +58,7 @@ export default function LocationSelection() {
       console.log("Sending payload:", payload);
 
       await axios.post(
-        "https://backend-api.redanttech.com/api/users/update-location",
+        "https://cast-api-zeta.vercel.app/api/users/update-location",
         payload,
       );
 

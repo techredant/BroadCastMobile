@@ -15,7 +15,7 @@ import { DrawerMenuButton } from "@/components/Button/DrawerMenuButton";
 import { useTheme } from "@/context/ThemeContext";
 import { useUserContext } from "@/context/FollowContext";
 
-const BASE_URL = "https://backend-api.redanttech.com/api/users";
+const BASE_URL = "https://cast-api-zeta.vercel.app/api/users";
 
 interface Member {
   _id: string;

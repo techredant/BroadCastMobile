@@ -23,7 +23,7 @@ import {
 import { useUserContext } from "@/context/FollowContext";
 import { useLevel } from "@/context/LevelContext";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2;
 const NUM_COLUMNS = 3;
@@ -86,7 +86,7 @@ export default function ProfileScreen() {
   const fetchPosts = useCallback(async () => {
     if (!userId) return;
     try {
-      const url = `${BASE_URL}/api/posts/${userId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
+      const url = `${BASE_URL}/api/posts/${userId}?levelType=${currentLevel?.type}&levelValue=${currentLevel?.value}`;
       const res = await axios.get(url);
       setPosts(res.data ?? []);
     } catch (err) {

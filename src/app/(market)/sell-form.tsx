@@ -169,7 +169,7 @@ const SellFormScreen = () => {
         if (url) uploadedUrls.push(url);
       }
 
-      await fetch(`https://backend-api.redanttech.com/api/products`, {
+      await fetch(`https://cast-api-zeta.vercel.app/api/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

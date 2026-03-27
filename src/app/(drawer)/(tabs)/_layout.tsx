@@ -77,7 +77,7 @@ export default function TabsLayout() {
   return (
     <LevelSocketProvider currentLevel={currentLevel}>
       <Tabs
-        lazy={false} // Mount all tabs immediately
+        // lazy={false} // Mount all tabs immediately
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: theme.primary,
@@ -113,6 +113,8 @@ export default function TabsLayout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="add-circle-outline" size={size} color={color} />
             ),
+            // presentation: "transparentModal", // makes screen overlay
+            // animation: "fade", // slide from bottom
           }}
         />
         <Tabs.Screen
@@ -130,17 +132,17 @@ export default function TabsLayout() {
             tabBarLabel: "you",
             tabBarIcon: ({ color, size }) =>
               profileImage ? (
-               <Image
-                         source={{
-                           uri: userDetails?.image || user?.imageUrl,
-                         }}
-                         style={{
-                           width: 30,
-                           height: 30,
-                           borderRadius: 32,
-                           backgroundColor: theme.border,
-                         }}
-                       />
+                <Image
+                  source={{
+                    uri: userDetails?.image || user?.imageUrl,
+                  }}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 32,
+                    backgroundColor: theme.border,
+                  }}
+                />
               ) : (
                 <Ionicons name="person-outline" size={size} color={color} />
               ),

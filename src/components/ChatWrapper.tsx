@@ -4,7 +4,7 @@ import { Chat, OverlayProvider, useCreateChatClient } from "stream-chat-expo";
 import { FullScreenLoader } from "./FullScreenLoader";
 import { studyBuddyTheme } from "@/lib/theme";
 
-const API_URL = "https://backend-api.redanttech.com";
+const API_URL = "https://cast-api-zeta.vercel.app";
 const STREAM_API_KEY = process.env.EXPO_PUBLIC_STREAM_API_KEY!;
 
 async function syncUserToStream(user: any) {

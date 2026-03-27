@@ -13,7 +13,7 @@ import io, { Socket } from "socket.io-client";
 
 import { Post } from "@/types/post";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 
 interface Level {
   type: string;

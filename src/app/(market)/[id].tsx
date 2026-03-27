@@ -53,7 +53,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(
-          `https://backend-api.redanttech.com/api/products/${id}`,
+          `https://cast-api-zeta.vercel.app/api/products/${id}`,
         );
         setProduct(res.data);
       } catch (err) {

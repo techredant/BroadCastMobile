@@ -23,7 +23,7 @@ import { useUserContext } from "@/context/FollowContext";
 import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2; // optional spacing between items

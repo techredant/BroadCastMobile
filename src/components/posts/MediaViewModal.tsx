@@ -54,7 +54,7 @@ export function MediaViewerModal({
           onPress={() => setModalVisible(false)}
           style={[styles.closeBtn, { top: insets.top + 10 }]}
         >
-          <Feather name="x" size={30} color="#fff" />
+          <Feather name="x" size={20} color="#fff" />
         </Pressable>
 
         <FlatList
@@ -111,6 +111,8 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 20,
     padding: 8,
+    backgroundColor: "gray",
+    borderRadius: 50
   },
 
   mediaContainer: {

@@ -122,7 +122,7 @@ const NamesScreen = () => {
       try {
         if (!user?.id) return;
         const res = await axios.get(
-          `https://backend-api.redanttech.com/api/users/${user.id}`,
+          `https://cast-api-zeta.vercel.app/api/users/${user.id}`,
         );
         if (res.data) {
           setFirstName(res.data.firstName || "");
@@ -158,7 +158,7 @@ const NamesScreen = () => {
   //     };
 
   //     const res = await axios.post(
-  //       "https://backend-api.redanttech.com/api/users/create-user",
+  //       "https://cast-api-zeta.vercel.app/api/users/create-user",
   //       payload,
   //         { timeout: 10000 } // 10 seconds
   //     );
@@ -208,7 +208,7 @@ const NamesScreen = () => {
 
       // 3️⃣ Save to backend
       const res = await axios.post(
-        "https://backend-api.redanttech.com/api/users/create-user",
+        "https://cast-api-zeta.vercel.app/api/users/create-user",
         payload,
         { timeout: 10000 }, // prevent hanging
       );

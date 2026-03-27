@@ -39,19 +39,25 @@ export function FloatingLevelButton() {
     // Special routes
     // Handle special routes first
     if (type === "ai") {
-      router.replace("/");
+      router.push("/");
       return; // <--- stop here
     }
+    // if (type === "live") {
+    //   router.replace("/live/livestream");
+    //   return;
+    // }
     if (type === "live") {
-      router.replace("/live");
+      console.log("Navigating to livestream");
+      router.replace("/(audio)/");
+      toggle();
       return;
     }
     if (type === "audioRoom") {
-      router.replace("/audio");
+      router.replace("/(audio)/src/AudioRoomUI");
       return;
     }
     if (type === "chat") {
-      router.replace("/(drawer)/(stream)");
+      router.replace("/");
       return;
     }
 
@@ -71,7 +77,7 @@ export function FloatingLevelButton() {
     };
 
     setCurrentLevel(mapping[type]);
-  };;
+  };
 
   const actions = [
     {

@@ -40,7 +40,7 @@ export default function MarketScreen() {
     const fetchProducts = async () => {
       try {
         const res = await axios.get<Product[]>(
-          "https://backend-api.redanttech.com/api/products",
+          "https://cast-api-zeta.vercel.app/api/products",
         );
         setProducts(res.data);
       } catch (err) {

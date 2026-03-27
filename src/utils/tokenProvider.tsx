@@ -3,7 +3,7 @@ import axios from "axios";
 export const tokenProvider = async (userId: string) => {
   try {
     const res = await axios.post(
-      "https://backend-api.redanttech.com/api/stream/token",
+      "https://cast-api-zeta.vercel.app/api/stream/token",
       { userId },
       { headers: { "Content-Type": "application/json" } },
     );

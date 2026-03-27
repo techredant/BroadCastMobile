@@ -23,7 +23,7 @@ import { Gesture } from "react-native-gesture-handler";
 import { useLevel } from "@/context/LevelContext";
 import { useTheme } from "@/context/ThemeContext";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const POST_MARGIN = 2;
 const NUM_COLUMNS = 3;
@@ -65,8 +65,8 @@ export default function MediaScreen() {
       const url = `${BASE_URL}/api/posts`;
       const res = await axios.get(url, {
         params: {
-          levelType: currentLevel.type,
-          levelValue: currentLevel.value,
+          levelType: currentLevel?.type,
+          levelValue: currentLevel?.value,
         },
       });
 
@@ -142,8 +142,8 @@ export default function MediaScreen() {
                   Media
                 </Text>
                 <Text style={styles.headerSubtitle}>
-                  {currentLevel.value?.charAt(0).toUpperCase() +
-                    currentLevel.value?.slice(1)}
+                  {currentLevel?.value?.charAt(0).toUpperCase() +
+                    currentLevel?.value?.slice(1)}
                 </Text>
               </View>
 
@@ -171,7 +171,7 @@ export default function MediaScreen() {
                   color={theme.text}
                 />
                 <Text style={{ marginTop: 16, color: theme.text }}>
-                  Loading {currentLevel.value} posts...
+                  Loading {currentLevel?.value} posts...
                 </Text>
               </>
             ) : (

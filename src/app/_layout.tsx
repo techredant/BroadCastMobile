@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { LevelProvider } from "@/context/LevelContext";
 import { UserOnboardingProvider } from "@/context/UserOnBoardingContext";
 import { UserProvider } from "@/context/FollowContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
@@ -177,31 +178,33 @@ function RootInnerLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <LevelProvider>
-          <UserOnboardingProvider>
-            {/* Wrap specific providers only if user exists to prevent crashes */}
-            {isSignedIn ? (
-              <UserProvider currentUserId={user!.id}>
-                <MenuProvider>
-                  <ChatWrapper user={user!}>
-                    <VideoProvider>
-                      <AppProvider>
-                        <Stack screenOptions={{ headerShown: false }} />
-                      </AppProvider>
-                    </VideoProvider>
-                  </ChatWrapper>
-                </MenuProvider>
-              </UserProvider>
-            ) : (
-              // Auth stack (doesn't need Stream/Chat contexts)
-              <Stack screenOptions={{ headerShown: false }} />
-            )}
-          </UserOnboardingProvider>
-        </LevelProvider>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <LevelProvider>
+            <UserOnboardingProvider>
+              {/* Wrap specific providers only if user exists to prevent crashes */}
+              {isSignedIn ? (
+                <UserProvider currentUserId={user!.id}>
+                  <MenuProvider>
+                    <ChatWrapper user={user!}>
+                      <VideoProvider>
+                        <AppProvider>
+                          <Stack screenOptions={{ headerShown: false }} />
+                        </AppProvider>
+                      </VideoProvider>
+                    </ChatWrapper>
+                  </MenuProvider>
+                </UserProvider>
+              ) : (
+                // Auth stack (doesn't need Stream/Chat contexts)
+                <Stack screenOptions={{ headerShown: false }} />
+              )}
+            </UserOnboardingProvider>
+          </LevelProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 

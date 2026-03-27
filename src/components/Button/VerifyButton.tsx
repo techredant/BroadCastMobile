@@ -23,7 +23,7 @@ const VerifyButton = () => {
       if (!user) return;
       try {
         const res = await axios.get(
-          `https://backend-api.redanttech.com/api/users/${user.id}`,
+          `https://cast-api-zeta.vercel.app/api/users/${user.id}`,
         );
         setVerified(res.data.isVerified || false);
 
@@ -45,7 +45,7 @@ const VerifyButton = () => {
       interval = setInterval(async () => {
         try {
           const res = await axios.get(
-            `https://backend-api.redanttech.com/api/users/${user.id}`,
+            `https://cast-api-zeta.vercel.app/api/users/${user.id}`,
           );
           if (res.data.isVerified) {
             setVerified(true);
@@ -64,7 +64,7 @@ const VerifyButton = () => {
     if (!user) return;
     try {
       setLoading(true);
-      await axios.post("https://backend-api.redanttech.com/api/verify", {
+      await axios.post("https://cast-api-zeta.vercel.app/api/verify", {
         email: user.primaryEmailAddress?.emailAddress,
       });
       //   Alert.alert(

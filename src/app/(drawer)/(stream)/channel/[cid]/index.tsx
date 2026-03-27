@@ -85,7 +85,7 @@ const ChannelScreen = () => {
         <TouchableOpacity
           onPress={() => {
             router.push({
-              pathname: "/call/[callId]",
+              pathname: "/(drawer)/(stream)/call/[callId]",
               params: { callId: channel?.id! },
             });
           }}

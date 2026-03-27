@@ -6,7 +6,7 @@ import { router } from "expo-router";
 export function PostButton() {
   return (
     <View style={styles.container} pointerEvents="box-none">
-      <Pressable style={styles.fab} onPress={() => router.push("/input")}>
+      <Pressable style={styles.fab} onPress={() => router.replace("/input")}>
         <Ionicons name="add" size={30} color="#fff" />
       </Pressable>
     </View>

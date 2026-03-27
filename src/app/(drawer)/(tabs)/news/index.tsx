@@ -17,7 +17,7 @@ import { useTheme } from "@/context/ThemeContext";
 
 import { FloatingLevelButton } from "@/modals/LevelFloatingAction";
 
-const BASE_URL = "https://backend-api.redanttech.com";
+const BASE_URL = "https://cast-api-zeta.vercel.app";
 
 interface Post {
   _id: string;
