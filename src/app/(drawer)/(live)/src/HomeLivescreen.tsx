@@ -85,7 +85,8 @@ export const HomeScreen = ({ client, joinCall }: Props) => {
       <DrawerMenuButton />
       <Animated.View entering={FadeInUp}>
         <View style={styles.header}>
-          <View>
+          <Text></Text>
+          <View style={{ paddingTop: 10}}>
             <Text style={[styles.level, { color: theme.text }]}>
               {currentLevel?.value?.toUpperCase()} Live Streams
             </Text>

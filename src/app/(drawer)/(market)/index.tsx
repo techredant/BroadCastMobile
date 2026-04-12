@@ -95,95 +95,95 @@ export default function MarketScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-    <DrawerMenuButton />
-    
-          {/* TOP ROW */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 16,
-              marginTop: 10,
-              marginBottom: 12,
-            }}
-          >
-            <Text></Text>
-            {/* Title */}
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 22,
-                color: theme.text,
-                textAlign: "center",
-    
-              }}
-            >
-              Market
-            </Text>
-    
-            {/* Sell Button */}
-            <Pressable
-              onPress={() => router.push("/sell-form")}
-              style={{
-                backgroundColor: theme.button,
-                paddingVertical: 8,
-                paddingHorizontal: 14,
-                borderRadius: 20,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: theme.buttonText,
-                  fontWeight: "600",
-                }}
-              >
-                Sell
-              </Text>
-            </Pressable>
-          </View>
-    
-          {/* SEARCH BAR */}
-          <View
-            style={{
-              paddingHorizontal: 16,
-              marginBottom: 16,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: theme.card,
-                borderRadius: 30,
-                borderWidth: 1,
-                borderColor: theme.border,
-                paddingHorizontal: 12,
-              }}
-            >
-              <Ionicons
-                name="search"
-                size={18}
-                color={theme.subtext}
-                style={{ marginRight: 8 }}
-              />
-    
-              <TextInput
-                placeholder="Search products..."
-                placeholderTextColor={theme.subtext}
-                value={searchText}
-                onChangeText={setSearchText}
-                style={{
-                  flex: 1,
-                  paddingVertical: 10,
-                  color: theme.text,
-                }}
-              />
-            </View>
-          </View>
+      {/* HEADER */}
+      <DrawerMenuButton />
 
+      {/* TOP ROW */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+          marginTop: 10,
+          marginBottom: 12,
+        }}
+      >
+        <Text></Text>
+        {/* Title */}
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 22,
+            color: theme.text,
+            textAlign: "center",
+
+          }}
+        >
+          Market
+        </Text>
+
+        {/* Sell Button */}
+        <Pressable
+          onPress={() => router.push("/sell-form")}
+          style={{
+            backgroundColor: theme.button,
+            paddingVertical: 8,
+            paddingHorizontal: 14,
+            borderRadius: 20,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: theme.buttonText,
+              fontWeight: "600",
+            }}
+          >
+            Sell
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* SEARCH BAR */}
+      <View
+        style={{
+          paddingHorizontal: 16,
+          marginBottom: 16,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: theme.card,
+            borderRadius: 30,
+            borderWidth: 1,
+            borderColor: theme.border,
+            paddingHorizontal: 12,
+          }}
+        >
+          <Ionicons
+            name="search"
+            size={18}
+            color={theme.subtext}
+            style={{ marginRight: 8 }}
+          />
+
+          <TextInput
+            placeholder="Search products..."
+            placeholderTextColor={theme.subtext}
+            value={searchText}
+            onChangeText={setSearchText}
+            style={{
+              flex: 1,
+              paddingVertical: 10,
+              color: theme.text,
+            }}
+          />
+        </View>
+      </View>
       {/* CATEGORY SCROLL */}
       <ScrollView
         horizontal
@@ -254,7 +254,7 @@ export default function MarketScreen() {
         }}
         renderItem={({ item, index }) => (
           <Pressable
-            onPress={() => router.push(`/(market)/${item._id}`)}
+            onPress={() => router.push(`/${item._id}`)}
             style={{
               flex: 1,
               marginBottom: 16,

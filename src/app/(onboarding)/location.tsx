@@ -1,89 +1,76 @@
-import {
-  View,
-  Text,
-  Pressable,
-  ActivityIndicator,
-  StatusBar,
-} from "react-native";
+import { View, Text, Pressable, StatusBar } from "react-native";
 import React, { useMemo, useState } from "react";
-import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TypeWriter from "react-native-typewriter";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
 import { router } from "expo-router";
+import { Dropdown } from "react-native-element-dropdown";
 import iebc from "../../../assets/data/iebc.json";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function LocationSelection() {
   const { theme, isDark } = useTheme();
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
 
-  const [selectedCounty, setSelectedCounty] = useState("");
-  const [selectedConstituency, setSelectedConstituency] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
+  const [selectedCounty, setSelectedCounty] = useState(null);
+  const [selectedConstituency, setSelectedConstituency] = useState(null);
+  const [selectedWard, setSelectedWard] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // IEBC cascading data
+  // Derived data
   const constituencies = useMemo(() => {
+    if (!selectedCounty) return [];
     const county = iebc.counties.find((c) => c.name === selectedCounty);
     return county?.constituencies || [];
   }, [selectedCounty]);
 
   const wards = useMemo(() => {
+    if (!selectedConstituency) return [];
     const constituency = constituencies.find(
       (c) => c.name === selectedConstituency,
     );
     return constituency?.wards || [];
   }, [selectedConstituency, constituencies]);
 
-  // Save location to backend
   const saveLocation = async () => {
-    if (loading) return;
-    if (!user?.id) {
-      console.log("User not ready");
-      return;
-    }
+    if (loading || !user?.id) return;
 
     setLoading(true);
-
     try {
-      const payload = {
-        clerkId: user.id,
-        county: selectedCounty || "N/A",
-        constituency: selectedConstituency || "N/A",
-        ward: selectedWard || "N/A",
-      };
-
-      console.log("Sending payload:", payload);
-
       await axios.post(
         "https://cast-api-zeta.vercel.app/api/users/update-location",
-        payload,
+        {
+          clerkId: user.id,
+          county: selectedCounty,
+          constituency: selectedConstituency,
+          ward: selectedWard,
+        },
       );
 
-      console.log("Location saved");
-      await user?.update({
+      await user.update({
         unsafeMetadata: {
-          ...user?.unsafeMetadata,
+          ...user.unsafeMetadata,
           onboardingComplete: true,
         },
       });
 
-      // Router navigation
-      try {
-        router.replace("/(drawer)/(tabs)");
-      } catch (navErr) {
-        console.log("Navigation failed:", navErr);
-      }
-    } catch (err: any) {
-      console.log("❌ Save failed:", err?.message || err);
+      router.replace("/(drawer)/(tabs)");
+    } catch (err) {
+      console.log("❌ Save failed:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // if (!isLoaded) return null;
+  const dropdownStyle = {
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 10,
+  };
 
   return (
     <SafeAreaView
@@ -100,10 +87,10 @@ export default function LocationSelection() {
         barStyle={isDark ? "light-content" : "dark-content"}
       />
 
+      {/* Header */}
       <View style={{ height: 120 }}>
         <TypeWriter
           typing={1}
-          numberOfLines={2}
           style={{
             margin: 20,
             fontSize: 20,
@@ -116,94 +103,101 @@ export default function LocationSelection() {
         </TypeWriter>
       </View>
 
-      {/* County */}
-      <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>
+      {/* COUNTY */}
+      <Text style={{ fontWeight: "bold", fontSize: 18, color: theme.text }}>
         County
       </Text>
-      <Picker
-        selectedValue={selectedCounty}
-        onValueChange={(val) => {
-          setSelectedCounty(val);
-          setSelectedConstituency("");
-          setSelectedWard("");
+      <Dropdown
+        style={dropdownStyle}
+        data={iebc.counties}
+        labelField="name"
+        valueField="name"
+        placeholder="Select County"
+        value={selectedCounty}
+        search
+        searchPlaceholder="Search county..."
+        onChange={(item) => {
+          setSelectedCounty(item.name);
+          setSelectedConstituency(null);
+          setSelectedWard(null);
         }}
-        style={{ color: theme.text }}
-        dropdownIconColor={theme.subtext}
+      />
+
+      {/* CONSTITUENCY */}
+      <Text
+        style={{
+          fontWeight: "bold",
+          fontSize: 18,
+          color: theme.text,
+          marginTop: 15,
+        }}
       >
-        <Picker.Item label="Select County" value="" />
-        {iebc.counties.map((c, idx) => (
-          <Picker.Item key={idx} label={c.name} value={c.name} />
-        ))}
-      </Picker>
+        Constituency
+      </Text>
+      <Dropdown
+        style={dropdownStyle}
+        data={constituencies}
+        labelField="name"
+        valueField="name"
+        placeholder="Select Constituency"
+        value={selectedConstituency}
+        search
+        searchPlaceholder="Search constituency..."
+        disable={!selectedCounty}
+        onChange={(item) => {
+          setSelectedConstituency(item.name);
+          setSelectedWard(null);
+        }}
+      />
 
-      {/* Constituency + Ward */}
-      {selectedCounty && (
-        <>
-          <Text style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}>
-            Constituency
-          </Text>
-          <Picker
-            selectedValue={selectedConstituency}
-            onValueChange={(val) => {
-              setSelectedConstituency(val);
-              setSelectedWard("");
-            }}
-            style={{ color: theme.text }}
-            dropdownIconColor={theme.subtext}
-          >
-            <Picker.Item label="Select Constituency" value="" />
-            {constituencies.map((c, idx) => (
-              <Picker.Item key={idx} label={c.name} value={c.name} />
-            ))}
-          </Picker>
+      {/* WARD */}
+      <Text
+        style={{
+          fontWeight: "bold",
+          fontSize: 18,
+          color: theme.text,
+          marginTop: 15,
+        }}
+      >
+        Ward
+      </Text>
+      <Dropdown
+        style={dropdownStyle}
+        data={wards}
+        labelField="name"
+        valueField="name"
+        placeholder="Select Ward"
+        value={selectedWard}
+        search
+        searchPlaceholder="Search ward..."
+        disable={!selectedConstituency}
+        onChange={(item) => {
+          setSelectedWard(item.name);
+        }}
+      />
 
-          {selectedConstituency && (
-            <>
-              <Text
-                style={{ fontWeight: "bold", fontSize: 20, color: theme.text }}
-              >
-                Ward
-              </Text>
-              <Picker
-                selectedValue={selectedWard}
-                onValueChange={setSelectedWard}
-                style={{ color: theme.text }}
-                dropdownIconColor={theme.subtext}
-              >
-                <Picker.Item label="Select Ward" value="" />
-                {wards.map((w, idx) => (
-                  <Picker.Item key={idx} label={w.name} value={w.name} />
-                ))}
-              </Picker>
-            </>
-          )}
-        </>
-      )}
-
-      {/* Selection preview */}
-      <Text style={{ marginTop: 20, fontWeight: "bold", color: theme.subtext }}>
-        ✅ Selected: {selectedCounty}
-        {selectedConstituency && ` → ${selectedConstituency}`}
-        {selectedWard && ` → ${selectedWard}`}
+      {/* Preview */}
+      <Text style={{ marginTop: 20, color: theme.subtext }}>
+        ✅ {selectedCounty || "-"}
+        {selectedConstituency ? ` → ${selectedConstituency}` : ""}
+        {selectedWard ? ` → ${selectedWard}` : ""}
       </Text>
 
-      {/* Continue */}
+      {/* BUTTON */}
       {selectedCounty && selectedConstituency && selectedWard && (
         <Pressable
           onPress={saveLocation}
           style={{
             backgroundColor: theme.primary,
-            paddingVertical: 16,
+            padding: 16,
             borderRadius: 12,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 40,
+            marginTop: 30,
           }}
         >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>
-            {" "}
-            {loading ? "loading..." : "Save & Continue"}
+          <Text
+            style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}
+          >
+            {loading ? "Saving..." : "Save & Continue"}
           </Text>
         </Pressable>
       )}

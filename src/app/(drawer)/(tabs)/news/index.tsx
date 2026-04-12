@@ -28,9 +28,8 @@ interface Post {
   commentsCount: number;
   views: number;
   accountType: string;
-  author: {
-    name: string;
-    avatar: string;
+  user: {
+    accountType: string;
   };
 }
 
@@ -76,7 +75,7 @@ export default function NewsScreen() {
       });
 
       const filteredNews = res.data.filter(
-        (item: Post) => item.accountType !== "Personal Account",
+        (item: Post) => item.user.accountType !== "Personal Account",
       );
 
       setNews(filteredNews);

@@ -87,10 +87,7 @@ export function PostCard({
   };
 
   const LIKE_COLOR = "#E0245E";
-  const REPOST_COLOR = "#17BF63";
-
-  const RECITE_COLOR = "blue";
-
+ 
   const mediaList = Array.isArray(post.media) ? post.media : [];
   const reciteMediaList = Array.isArray(post.reciteMedia)
     ? post.reciteMedia
@@ -405,10 +402,10 @@ export function PostCard({
             paddingBottom: 6,
           }}
         >
-          <Feather name="repeat" size={14} color={REPOST_COLOR} />
+          <Feather name="repeat" size={14} color={theme.text} />
           <Text
             style={{
-              color: REPOST_COLOR,
+              color: theme.text,
               fontSize: 12,
               fontWeight: "600",
             }}
@@ -436,7 +433,7 @@ export function PostCard({
           }}
         >
           <Pressable
-            // onPress={() => router.push(`/profileId/${postCard.userId}`)}
+            onPress={() => router.push(`/profileId/${postCard.userId}`)}
             style={{ flex: 1, flexDirection: "row", gap: 10 }}
           >
             <Image
@@ -919,7 +916,7 @@ export function PostCard({
             <MaterialCommunityIcons
               name="comment-quote-outline"
               size={20}
-              color={recited ? RECITE_COLOR : theme.subtext}
+              color={recited ? theme.text : theme.subtext}
             />
             <Text style={{ color: theme.subtext }}>
               {postCard.quoteCount > 0 ? postCard.quoteCount : " "}
@@ -944,13 +941,13 @@ export function PostCard({
                 <Entypo
                   name="cycle"
                   size={18}
-                  color={reposted ? REPOST_COLOR : theme.subtext}
+                  color={reposted ? theme.text : theme.subtext}
                 />
               </Animated.View>
 
               <Text
                 style={{
-                  color: reposted ? REPOST_COLOR : theme.subtext,
+                  color: reposted ? theme.text : theme.subtext,
                   minWidth: 8,
                 }}
               >

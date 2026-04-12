@@ -55,12 +55,12 @@
 
 // src/app/(tabs)/_layout.tsx
 import React from "react";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-expo";
 import { LevelSocketProvider } from "@/contexts/LevelSocketContext";
 import { PostButton } from "@/modals/PostButton";
-import { Image } from "react-native";
+import { Image, Pressable, View } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import { useLevel } from "@/context/LevelContext";
 
@@ -109,12 +109,37 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="input"
           options={{
-            tabBarLabel: "Post",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="add-circle-outline" size={size} color={color} />
+            tabBarLabel: "",
+            tabBarIcon: () => null,
+
+            tabBarButton: (props) => (
+              <Pressable
+                {...props}
+                onPress={() => router.push("/input")}
+                style={{
+                  top: -5, // 👈 lifts above tab bar
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 30,
+                    backgroundColor: "#1F2937",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 8,
+                    shadowColor: "#000",
+                    shadowOpacity: 0.3,
+                    shadowRadius: 6,
+                  }}
+                >
+                  <Ionicons name="add" size={30} color="#fff" />
+                </View>
+              </Pressable>
             ),
-            // presentation: "transparentModal", // makes screen overlay
-            // animation: "fade", // slide from bottom
           }}
         />
         <Tabs.Screen
@@ -150,7 +175,7 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      <PostButton />
+      {/* <PostButton /> */}
     </LevelSocketProvider>
   );
 }

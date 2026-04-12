@@ -176,6 +176,16 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
+        name="(market)"
+        options={{
+          drawerLabel: "Market",
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="cart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
         name="trends"
         options={{
           drawerLabel: "Trends",
@@ -210,6 +220,24 @@ export default function DrawerLayout() {
           drawerLabel: "Settings",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="(live)"
+        options={{
+          drawerLabel: "Live Streams",
+          drawerIcon: ({ color, size }) => (
+            <Feather name="video" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="(audio)"
+        options={{
+          drawerLabel: "Audio Rooms",
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="mic-circle" size={size} color={color} />
           ),
         }}
       />

@@ -99,15 +99,17 @@ const ChannelScreen = () => {
   if (!channel) return <FullScreenLoader message="Loading  room..." />;
 
   return (
-    <View className="flex-1 bg-border">
+    <View className=" bg-border">
       <Channel
         channel={channel}
         keyboardVerticalOffset={headerHeight}
+        // thread={thread}
+        // threadList
         EmptyStateIndicator={() => (
           <EmptyState
             icon="book-outline"
             title="No messages yet"
-            subtitle="Start a  conversation!"
+            subtitle="Start a conversation!"
           />
         )}
       >

@@ -8,7 +8,7 @@ import Animated, {
   FadeIn,
   FadeOut,
 } from "react-native-reanimated";
-import { router } from "expo-router";
+import { useRouter } from "expo-router"; // ✅ FIXED
 import { useLevel } from "@/context/LevelContext";
 
 type LevelType =
@@ -19,14 +19,13 @@ type LevelType =
   | "ai"
   | "live"
   | "audioRoom"
-  | "chat";
 
 export function FloatingLevelButton() {
   const [open, setOpen] = useState(false);
   const progress = useSharedValue(0);
   const { userDetails, setCurrentLevel } = useLevel();
+  const router = useRouter(); // ✅ correct usage
 
-  // Animate progress when open changes
   useEffect(() => {
     progress.value = withTiming(open ? 1 : 0, { duration: 250 });
   }, [open]);
@@ -34,34 +33,32 @@ export function FloatingLevelButton() {
   const toggle = () => setOpen((prev) => !prev);
 
   const selectLevel = (type: LevelType) => {
-    toggle(); // close menu
+    // ✅ close menu FIRST (no double toggle)
+    setOpen(false);
 
-    // Special routes
-    // Handle special routes first
+    // 🔥 SPECIAL ROUTES
     if (type === "ai") {
       router.push("/");
-      return; // <--- stop here
-    }
-    // if (type === "live") {
-    //   router.replace("/live/livestream");
-    //   return;
-    // }
-    if (type === "live") {
-      console.log("Navigating to livestream");
-      router.replace("/(audio)/");
-      toggle();
-      return;
-    }
-    if (type === "audioRoom") {
-      router.replace("/(audio)/src/AudioRoomUI");
-      return;
-    }
-    if (type === "chat") {
-      router.replace("/");
       return;
     }
 
-    // Update context level
+    if (type === "live") {
+      setTimeout(() => {
+        router.push("/(live)"); // ✅ NO /index
+      }, 150);
+      return;
+    }
+
+    if (type === "audioRoom") {
+      setTimeout(() => {
+        router.push("/(audio)");
+      }, 150);
+      return;
+    }
+
+
+
+    // ✅ NORMAL STATE UPDATE
     const mapping: Record<LevelType, { type: string; value: string }> = {
       home: { type: "home", value: "home" },
       county: { type: "county", value: userDetails?.county ?? "county" },
@@ -73,7 +70,6 @@ export function FloatingLevelButton() {
       ai: { type: "ai", value: "ai" },
       live: { type: "live", value: "live" },
       audioRoom: { type: "audioRoom", value: "audioRoom" },
-      chat: { type: "chat", value: "chat" },
     };
 
     setCurrentLevel(mapping[type]);
@@ -122,17 +118,9 @@ export function FloatingLevelButton() {
       icon: <Ionicons name="mic-circle" size={22} color="#fff" />,
       offset: 360,
     },
-    {
-      key: "chat",
-      label: "Chat members",
-      icon: (
-        <Ionicons name="chatbubble-ellipses-outline" size={18} color="#fff" />
-      ),
-      offset: 420,
-    },
   ];
 
-  // Precompute animated styles outside map
+  // ✅ SAFE animated style generator
   const getActionStyle = (offset: number) =>
     useAnimatedStyle(() => ({
       transform: [
@@ -149,10 +137,10 @@ export function FloatingLevelButton() {
       pointerEvents="box-none"
       style={StyleSheet.absoluteFill}
     >
-      {/* Overlay to close menu */}
+      {/* Overlay */}
       {open && <Pressable style={StyleSheet.absoluteFill} onPress={toggle} />}
 
-      {/* Action buttons */}
+      {/* Actions */}
       {actions.map((action) => (
         <Animated.View
           key={action.key}
@@ -168,7 +156,7 @@ export function FloatingLevelButton() {
         </Animated.View>
       ))}
 
-      {/* FAB button */}
+      {/* FAB */}
       <Pressable style={styles.fab} onPress={toggle}>
         <Feather name="plus" size={26} color="#fff" />
       </Pressable>
@@ -190,7 +178,12 @@ const styles = StyleSheet.create({
     elevation: 8,
     zIndex: 20,
   },
-  actionContainer: { position: "absolute", bottom: 90, right: 20, zIndex: 15 },
+  actionContainer: {
+    position: "absolute",
+    bottom: 90,
+    right: 20,
+    zIndex: 15,
+  },
   action: {
     flexDirection: "row",
     alignItems: "center",
@@ -201,5 +194,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     elevation: 5,
   },
-  actionText: { color: "#fff", marginLeft: 8, fontWeight: "600", fontSize: 13 },
+  actionText: {
+    color: "#fff",
+    marginLeft: 8,
+    fontWeight: "600",
+    fontSize: 13,
+  },
 });

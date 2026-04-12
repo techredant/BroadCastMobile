@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   StatusBar,
   Pressable,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router, Link } from "expo-router";
@@ -16,6 +17,7 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useChatContext } from "stream-chat-expo";
 import { useTheme } from "@/context/ThemeContext";
+import { useUser } from "@clerk/clerk-expo";
 
 const { width } = Dimensions.get("window");
 
@@ -41,7 +43,7 @@ interface Member {
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme, isDark } = useTheme();
-
+  const { user } = useUser();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -96,6 +98,8 @@ export default function ProductDetail() {
     );
   }
 
+  const owner = product.userId === user?.id;
+
   const startDM = async () => {
     if (!client || !client.userID || !product?.userId) return;
 
@@ -117,7 +121,7 @@ export default function ProductDetail() {
         text:
           `${product.title}` +
           "\n" +
-          `price:  KES ${product.price.toLocaleString("en-KE")}${product.price}  + "\n"  + ${(<Link href={`/market/${product._id}`}></Link>)}`,
+          `price:  KES ${product.price.toLocaleString("en-KE")}${product.price}  + "\n"  + ${(<Link href={`/${product._id}`}></Link>)}`,
 
         attachments: [
           {
@@ -319,37 +323,40 @@ export default function ProductDetail() {
           paddingVertical: 5,
         }}
       >
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            marginRight: 8,
-            borderWidth: 1,
-            borderColor: theme.success,
-            borderRadius: 999,
-            paddingVertical: 12,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: theme.success, fontWeight: "600" }}>
-            Call Seller
-          </Text>
-        </TouchableOpacity>
-
-        <Pressable
-          onPress={startDM}
-          style={{
-            flex: 1,
-            marginLeft: 8,
-            backgroundColor: theme.success,
-            borderRadius: 999,
-            paddingVertical: 12,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>
-            Chat with seller
-          </Text>
-        </Pressable>
+        {!owner && (
+          <>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                marginRight: 8,
+                borderWidth: 1,
+                borderColor: theme.success,
+                borderRadius: 999,
+                paddingVertical: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: theme.success, fontWeight: "600" }}>
+                Call Seller
+              </Text>
+            </TouchableOpacity>
+            <Pressable
+              onPress={startDM}
+              style={{
+                flex: 1,
+                marginLeft: 8,
+                backgroundColor: theme.success,
+                borderRadius: 999,
+                paddingVertical: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>
+                Chat with seller
+              </Text>
+            </Pressable>
+          </>
+        )}
       </View>
     </SafeAreaView>
   );

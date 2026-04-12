@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // ✅ Expo Router
 import * as ImagePicker from "expo-image-picker";
-import { Picker } from "@react-native-picker/picker";
 import { useUser } from "@clerk/clerk-expo";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -38,6 +37,7 @@ const SellFormScreen = () => {
   const [descriptionError, setDescriptionError] = useState("");
   const [imagesError, setImagesError] = useState("");
   const [categoryError, setCategoryError] = useState("");
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   const categories = [
     "Electronics",
@@ -277,32 +277,29 @@ const SellFormScreen = () => {
 
         {/* Category */}
         <Text style={[styles.label, { color: theme.text }]}>Category</Text>
-        <View
+
+        <TouchableOpacity
           style={[
-            styles.pickerWrapper,
-            { backgroundColor: theme.card, borderColor: theme.border },
+            styles.input,
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.border,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            },
           ]}
+          onPress={() => setShowCategoryModal(true)}
         >
-          <Picker
-            selectedValue={category}
-            onValueChange={(value) => setCategory(value)}
-            dropdownIconColor={theme.subtext}
-          >
-            <Picker.Item
-              label="-- Select Category --"
-              value=""
-              color={theme.subtext}
-            />
-            {categories.map((cat, index) => (
-              <Picker.Item
-                key={index}
-                label={cat}
-                value={cat}
-                color={theme.text}
-              />
-            ))}
-          </Picker>
-        </View>
+          <Text style={{ color: category ? theme.text : theme.subtext }}>
+            {category || "Select Category"}
+          </Text>
+          <Ionicons name="chevron-down" size={18} color={theme.subtext} />
+        </TouchableOpacity>
+
+        {categoryError ? (
+          <Text style={styles.errorText}>{categoryError}</Text>
+        ) : null}
         {categoryError ? (
           <Text style={styles.errorText}>{categoryError}</Text>
         ) : null}
@@ -385,6 +382,42 @@ const SellFormScreen = () => {
           )}
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Category Modal */}
+      {showCategoryModal && (
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContainer, { backgroundColor: theme.card }]}
+          >
+            <Text style={[styles.modalTitle, { color: theme.text }]}>
+              Select Category
+            </Text>
+
+            <ScrollView>
+              {categories.map((cat, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.modalItem}
+                  onPress={() => {
+                    setCategory(cat);
+                    setShowCategoryModal(false);
+                    setCategoryError("");
+                  }}
+                >
+                  <Text style={{ color: theme.text }}>{cat}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.modalClose}
+              onPress={() => setShowCategoryModal(false)}
+            >
+              <Text style={{ color: "red" }}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -452,5 +485,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
+  },
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  modalContainer: {
+    borderRadius: 12,
+    maxHeight: "70%",
+    padding: 16,
+  },
+
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+
+  modalItem: {
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#ccc",
+  },
+
+  modalClose: {
+    marginTop: 10,
+    alignItems: "center",
   },
 });

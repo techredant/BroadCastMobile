@@ -16,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import * as ImagePicker from "expo-image-picker";
-import { Picker } from "@react-native-picker/picker";
+import { Dropdown } from "react-native-element-dropdown";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
 import { useUserOnboarding } from "@/context/UserOnBoardingContext";
@@ -302,26 +302,27 @@ const NamesScreen = () => {
           <Text style={{ color: theme.text, fontWeight: "bold" }}>
             Account Type
           </Text>
-          <View
+          <Dropdown
             style={{
               borderWidth: 1,
               borderColor: theme.border,
-              borderRadius: 8,
-              backgroundColor: theme.background,
+              borderRadius: 10,
+              paddingHorizontal: 12,
+              paddingVertical: 10,
               marginBottom: 10,
             }}
-          >
-            <Picker
-              selectedValue={accountType}
-              onValueChange={setAccountType}
-              dropdownIconColor={theme.text}
-              style={{ color: theme.text, paddingHorizontal: 8 }}
-            >
-              {accountOptions.map((opt, idx) => (
-                <Picker.Item key={idx} label={opt} value={opt} />
-              ))}
-            </Picker>
-          </View>
+            data={accountOptions.map((item) => ({
+              label: item,
+              value: item,
+            }))}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Account Type"
+            value={accountType}
+            search
+            searchPlaceholder="Search account type..."
+            onChange={(item) => setAccountType(item.value)}
+          />
           {errors.accountType ? (
             <Text style={{ color: "red" }}>{errors.accountType}</Text>
           ) : null}

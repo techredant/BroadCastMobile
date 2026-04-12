@@ -8,9 +8,8 @@ import {
   Pressable,
   Dimensions,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { useUser } from "@clerk/clerk-expo";
 import { MediaViewerModal } from "@/components/posts/MediaViewModal";
 import {
   useAnimatedStyle,
@@ -22,37 +21,46 @@ import { useLevel } from "@/context/LevelContext";
 import { useUserContext } from "@/context/FollowContext";
 import { useTheme } from "@/context/ThemeContext";
 import Video from "react-native-video";
+import { io, Socket } from "socket.io-client";
 
 const BASE_URL = "https://cast-api-zeta.vercel.app";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const POST_MARGIN = 2; // optional spacing between items
+const POST_MARGIN = 2;
 const NUM_COLUMNS = 3;
 const POST_SIZE =
   (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
 
 export default function ProfileScreen() {
-  const { members, currentUserId, toggleFollow } = useUserContext();
+  const { members, toggleFollow } = useUserContext();
   const { userDetails, isLoadingUser, currentLevel } = useLevel();
+  const { theme } = useTheme();
+
   const [posts, setPosts] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const socketRef = useRef<Socket | null>(null);
+
+  const [activeTab, setActiveTab] = useState<
+    "posts" | "followers" | "following"
+  >("posts");
 
   const openMedia = (index: number) => {
     setSelectedIndex(index);
     setModalVisible(true);
   };
 
-  // -------------------- Prepare followers/following --------------------
+  /* ---------------- FOLLOW DATA ---------------- */
   const followersData = members.filter((m) =>
     m.followers.includes(userDetails?.clerkId),
   );
   const followingData = members.filter((m) => m.isFollowing);
 
-  // -------------------- Flatten media posts --------------------
+  /* ---------------- MEDIA ---------------- */
   const mediaPosts = posts
-    .filter((p) => p.media && p.media.length > 0)
+    .filter((p) => p.media?.length)
     .flatMap((p) => p.media);
 
   const getData = () => {
@@ -62,16 +70,12 @@ export default function ProfileScreen() {
     return [];
   };
 
-  const [activeTab, setActiveTab] = useState<
-    "posts" | "followers" | "following"
-  >("posts");
-
+  /* ---------------- FETCH POSTS ---------------- */
   const fetchPosts = useCallback(async () => {
     if (!userDetails?.clerkId) return;
 
     try {
-      const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel?.type}&levelValue=${currentLevel?.value}`;
-
+      const url = `${BASE_URL}/api/posts/${userDetails.clerkId}?levelType=${currentLevel?.type}&levelValue=${currentLevel?.value}`;
       const res = await axios.get(url);
       setPosts(res.data ?? []);
     } catch (err) {
@@ -85,7 +89,40 @@ export default function ProfileScreen() {
     fetchPosts();
   }, [fetchPosts]);
 
-  // /* ---------------- PINCH ZOOM ---------------- */
+  /* ---------------- REALTIME SOCKET ---------------- */
+  useEffect(() => {
+    if (!userDetails?.clerkId) return;
+
+    const socket = io(BASE_URL, {
+      transports: ["websocket"],
+    });
+
+    socketRef.current = socket;
+
+    const handleNewPost = (post: any) => {
+      if (post.userId === userDetails.clerkId) {
+        setPosts((prev) => {
+          if (prev.find((p) => p._id === post._id)) return prev;
+          return [post, ...prev];
+        });
+      }
+    };
+
+    const handleDeletePost = (postId: string) => {
+      setPosts((prev) => prev.filter((p) => p._id !== postId));
+    };
+
+    socket.on("newPost", handleNewPost);
+    socket.on("deletePost", handleDeletePost);
+
+    return () => {
+      socket.off("newPost", handleNewPost);
+      socket.off("deletePost", handleDeletePost);
+      socket.disconnect();
+    };
+  }, [userDetails?.clerkId]);
+
+  /* ---------------- PINCH ---------------- */
   const pinchScale = useSharedValue(1);
 
   const pinchGesture = Gesture.Pinch()
@@ -100,21 +137,20 @@ export default function ProfileScreen() {
     transform: [{ scale: pinchScale.value }],
   }));
 
-  // Pull-to-refresh
   const onRefresh = () => {
     setRefreshing(true);
     fetchPosts();
   };
-  const { theme } = useTheme();
 
   if (isLoadingUser) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.center}>
         <Text>Loading profile...</Text>
       </View>
     );
   }
 
+  /* ---------------- RENDER ---------------- */
   const renderItem = ({ item, index }: any) => {
     if (activeTab === "posts") {
       const isVideo = item.endsWith(".mp4") || item.endsWith(".mov");
@@ -127,7 +163,6 @@ export default function ProfileScreen() {
               style={styles.postImage}
               resizeMode="cover"
               repeat
-              paused={false}
               muted
             />
           ) : (
@@ -138,25 +173,14 @@ export default function ProfileScreen() {
     }
 
     return (
-      <View
-        style={[
-          styles.userRow,
-          {
-            width: "100%",
-            justifyContent: "space-between",
-            backgroundColor: theme.background,
-          },
-        ]}
-      >
+      <View style={[styles.userRow, { backgroundColor: theme.background }]}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image source={{ uri: item?.image }} style={styles.userAvatar} />
-          {item.firstName ? (
-            <Text style={styles.userName}>
-              {item.firstName} {item.lastName}
-            </Text>
-          ) : (
-            <Text style={styles.userName}>{item.companyName}</Text>
-          )}
+          <Text style={styles.userName}>
+            {item.firstName
+              ? `${item.firstName} ${item.lastName}`
+              : item.companyName}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -185,14 +209,12 @@ export default function ProfileScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
+      {/* HEADER */}
       <View style={styles.header}>
         <Image
           source={{
             uri:
-              userDetails?.image?.trim() !== ""
-                ? userDetails?.image
-                : "https://i.pravatar.cc/150?img=32",
+              userDetails?.image?.trim() || "https://i.pravatar.cc/150?img=32",
           }}
           style={styles.avatar}
         />
@@ -204,76 +226,51 @@ export default function ProfileScreen() {
           <Text style={styles.username}>@{userDetails?.nickName}</Text>
         </View>
 
-        {/* Stats */}
         <View style={styles.stats}>
-          <TouchableOpacity
-            style={styles.statItem}
-            onPress={() => setActiveTab("posts")}
-          >
-            <Text style={styles.statNumber}>{posts.length}</Text>
-            <Text
-              style={[
-                styles.statLabel,
-                activeTab === "posts" && styles.activeLabel,
-              ]}
+          {["posts", "followers", "following"].map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab as any)}
+              style={styles.statItem}
             >
-              Posts
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.statItem}
-            onPress={() => setActiveTab("followers")}
-          >
-            <Text style={styles.statNumber}>{followersData.length}</Text>
-            <Text
-              style={[
-                styles.statLabel,
-                activeTab === "followers" && styles.activeLabel,
-              ]}
-            >
-              Followers
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.statItem}
-            onPress={() => setActiveTab("following")}
-          >
-            <Text style={styles.statNumber}>{followingData.length}</Text>
-            <Text
-              style={[
-                styles.statLabel,
-                activeTab === "following" && styles.activeLabel,
-              ]}
-            >
-              Following
-            </Text>
-          </TouchableOpacity>
+              <Text style={styles.statNumber}>
+                {tab === "posts"
+                  ? posts.length
+                  : tab === "followers"
+                    ? followersData.length
+                    : followingData.length}
+              </Text>
+              <Text
+                style={[
+                  styles.statLabel,
+                  activeTab === tab && styles.activeLabel,
+                ]}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
-      {/* Content */}
+      {/* CONTENT */}
       <FlatList
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 140, flexDirection: "row" }}
         data={getData()}
         key={activeTab}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={activeTab === "posts" ? 3 : 1} // 3 columns
+        numColumns={activeTab === "posts" ? 3 : 1}
+        keyExtractor={(_, i) => i.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 140 }}
       />
 
-      {/* MEDIA MODAL */}
+      {/* MODAL */}
       <MediaViewerModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        mediaList={mediaPosts} // pass all media
+        mediaList={mediaPosts}
         selectedIndex={selectedIndex}
-        post={posts.find(
-          (p) => p.media && p.media.includes(mediaPosts[selectedIndex]),
-        )}
+        post={posts.find((p) => p.media?.includes(mediaPosts[selectedIndex]))}
         pinchGesture={pinchGesture}
         pinchStyle={pinchStyle}
       />
@@ -281,82 +278,29 @@ export default function ProfileScreen() {
   );
 }
 
+/* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 40,
-  },
-  header: {
-    flexDirection: "column",
-    paddingHorizontal: 16,
-    alignItems: "center",
-  },
-  avatar: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-  },
+  container: { flex: 1, paddingTop: 40 },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  header: { alignItems: "center", paddingHorizontal: 16 },
+  avatar: { width: 90, height: 90, borderRadius: 45 },
+
+  bio: { marginTop: 10, alignItems: "center" },
+  name: { fontWeight: "bold", fontSize: 16 },
+  username: { color: "#666" },
+
   stats: {
-    // flex: 1,
-    width: "100%",
     flexDirection: "row",
     justifyContent: "space-around",
+    width: "100%",
+    marginTop: 12,
   },
-  statItem: {
-    alignItems: "center",
-  },
-  statNumber: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  bio: {
-    paddingHorizontal: 16,
-    marginTop: 10,
-  },
-  name: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  username: {
-    color: "#666",
-  },
-  bioText: {
-    marginTop: 4,
-  },
-  actions: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    marginVertical: 12,
-  },
-  followButton: { paddingVertical: 6, paddingHorizontal: 16, borderRadius: 20 },
-  primaryBtn: {
-    flex: 1,
-    backgroundColor: "#1DA1F2",
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    marginRight: 8,
-  },
-  secondaryBtn: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  primaryText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  secondaryText: {
-    fontWeight: "bold",
-  },
+  statItem: { alignItems: "center" },
+  statNumber: { fontSize: 18, fontWeight: "bold" },
+  statLabel: { fontSize: 12, color: "#666" },
+  activeLabel: { color: "#1DA1F2", fontWeight: "bold" },
+
   postImage: {
     width: POST_SIZE,
     height: POST_SIZE,
@@ -366,22 +310,17 @@ const styles = StyleSheet.create({
   userRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     padding: 12,
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
-  userAvatar: {
-    width: 40,
-    height: 40,
+  userAvatar: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
+  userName: { fontSize: 16, fontWeight: "500" },
+
+  followButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    marginRight: 12,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  activeLabel: {
-    color: "#1DA1F2",
-    fontWeight: "bold",
   },
 });

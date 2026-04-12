@@ -37,7 +37,11 @@ const ChatsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={["top"]}>
+    <SafeAreaView
+      style={{ flex: 1 }}
+      edges={["top"]}
+      className="flex-1 bg-background"
+    >
       <StatusBar
         translucent
         backgroundColor="transparent"

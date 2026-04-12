@@ -11,8 +11,7 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
 
 const VerifyButton = () => {
-  const { user } = useUser();
-
+  const { user } = useUser();     
   const [loading, setLoading] = useState(false);
   const [verificationStarted, setVerificationStarted] = useState(false);
   const [verified, setVerified] = useState(false);
